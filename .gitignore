@@ -3,3 +3,11 @@
 
 # OS files
 .DS_Store
+
+# Full-resolution original photos — kept locally as source only.
+# The site uses the optimized copies committed under images/web/.
+# (Each original is 11–27 MB; committing them would bloat the repo and
+#  every GitHub Pages deploy. Remove these lines if you ever want them tracked.)
+/images/*.jpg
+/images/*.png
+/images/*.PNG

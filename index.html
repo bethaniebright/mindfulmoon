@@ -3,63 +3,219 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coming Soon</title>
-  <style>
-    :root {
-      color-scheme: light dark;
-    }
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        Helvetica, Arial, sans-serif;
-      background: #0f1115;
-      color: #f5f6f8;
-      text-align: center;
-      padding: 1.5rem;
-    }
-    main {
-      max-width: 32rem;
-    }
-    h1 {
-      font-size: clamp(2rem, 6vw, 3.25rem);
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      line-height: 1.1;
-    }
-    p {
-      margin-top: 1rem;
-      font-size: clamp(1rem, 2.5vw, 1.15rem);
-      color: #a3a8b3;
-      line-height: 1.6;
-    }
-    .dot {
-      display: inline-block;
-      width: 0.5rem;
-      height: 0.5rem;
-      margin-top: 2rem;
-      border-radius: 50%;
-      background: #5b8cff;
-      animation: pulse 1.8s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 0.35; transform: scale(0.9); }
-      50% { opacity: 1; transform: scale(1.15); }
-    }
-  </style>
+  <title>Mindful Moon Therapy — Creative practice, reflection & intuitive art</title>
+  <meta name="description" content="Mindful Moon Therapy — a space for creative practice, reflection, and intuitive art making. Life is hard. Let's make some art about it." />
+  <link rel="icon" href="images/web/logo.png" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+
+  <!-- ============================================================
+       SITE HEADER  (identical on every page — keep in sync)
+       Only the .is-active nav link changes per page.
+       ============================================================ -->
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="index.html">
+        <img src="images/web/logo.png" alt="Mindful Moon Therapy logo" />
+        <span class="brand__name">Mindful Moon Therapy</span>
+      </a>
+      <button class="nav__toggle" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <nav class="nav" id="site-nav">
+        <ul class="nav__links">
+          <li><a href="index.html" class="is-active">Home</a></li>
+          <li><a href="start-here.html">Start Here</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="nav__social">
+          <a href="http://www.instagram.com/mindfulmoontherapy" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5.5"/><circle cx="12" cy="12" r="4"/><line x1="17.5" y1="6.5" x2="17.5" y2="6.5" stroke-width="2.2"/></svg>
+          </a>
+          <a href="https://www.facebook.com/groups/creativecoworkingcommunity" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg>
+          </a>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <!-- ==== /SITE HEADER ==== -->
+
   <main>
-    <h1>Coming&nbsp;Soon</h1>
-    <p>We're putting the finishing touches on something new. Please check back shortly.</p>
-    <div class="dot" aria-hidden="true"></div>
+
+    <!-- 1. HERO -->
+    <section class="hero">
+      <div class="wrap hero__grid">
+        <div>
+          <h1>Mindful Moon Therapy</h1>
+          <p class="hero__subtitle">Life is hard. Let's make some art about it.</p>
+          <p class="hero__body">You can't always think your way through something. Sometimes you have to feel your way through it. The moon has always been tied to the parts of us that move beneath the surface. That's where art works. This space is for creative practice, reflection, and people who'd rather see your mess than your highlight reel.</p>
+          <p class="hero__cta"><a class="btn" href="https://www.skool.com/portals-8012/about" target="_blank" rel="noopener">Join the Community →</a></p>
+        </div>
+        <div class="hero__art hero__art--plain">
+          <img src="images/web/arch.png" alt="Illustrated arch showing a night sky, moon, stars, rainbow rays, an eye, stairs and a growing plant" />
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. INTUITIVE ART MAKING -->
+    <section class="section section--alt">
+      <div class="wrap split">
+        <div class="split__media">
+          <img src="images/web/photo-7588.jpg" alt="Bethanie sitting on the floor drawing on a large sheet of paper" />
+        </div>
+        <div class="split__body">
+          <p class="eyebrow">Intuitive Art Making</p>
+          <div class="prose" style="margin-top:1rem;">
+            <p>Intuitive art making is about letting go of preconceived ideas of what it means to be creative and following what is asking to come through. The materials become a channel for what lies beneath the surface, helping you access emotions and experiences that can be hard to name out loud. Releasing control, trusting your intuition, and staying with what unfolds can open up a different kind of knowing.</p>
+          </div>
+          <p style="margin-top:1.6rem;"><a class="btn" href="start-here.html">Learn More →</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. OFFERINGS -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section__head">
+          <p class="eyebrow">Offerings</p>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <div class="card__media"><img src="images/web/photo-7801.jpg" alt="Bethanie kneeling in the studio with paint on her hands, smiling" /></div>
+            <div class="card__body">
+              <h3>Online Community</h3>
+              <a class="btn" href="https://www.skool.com/portals-8012/about" target="_blank" rel="noopener">Join Canvas for Chaos →</a>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card__media"><img src="images/web/photo-7740.jpg" alt="Paint-covered hands raised over a page of colorful splatter art" /></div>
+            <div class="card__body">
+              <h3>Classes &amp; Workshops</h3>
+              <a class="btn" href="https://lu.ma/MindfulMoon" target="_blank" rel="noopener">See What's Coming →</a>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card__media"><img src="images/web/photo-7809.jpg" alt="Overhead view of teal-painted hands working on a large abstract painting" /></div>
+            <div class="card__body">
+              <h3>Artwork</h3>
+              <!-- TEMPORARY Squarespace link — points to existing portfolio until the portfolio page is built -->
+              <a class="btn" href="https://www.mindfulmoontherapy.com/portfolio" target="_blank" rel="noopener">See the Work →</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. ABOUT -->
+    <section class="section section--alt">
+      <div class="wrap split split--reverse">
+        <div class="split__media">
+          <img src="images/web/photo-7424.jpg" alt="Portrait of Bethanie Bright resting her chin on her hands, artwork behind her" />
+        </div>
+        <div class="split__body">
+          <h2>About</h2>
+          <div class="prose" style="margin-top:1.2rem;">
+            <p>I'm Bethanie Bright 🌈✨🎨</p>
+            <p>I make art for a living and I also make art so I don't lose my mind. Most days those are the same thing.</p>
+            <p>I spent years keeping the peace, swallowing what I actually thought, and being "fine." My body finally said no. I got sick, and the sickest part is that it took an autoimmune disease for me to start telling myself the truth. An art journal is what got me out. Therapy and other interventions were helpful. But none of it cracked me open the way the page did.</p>
+            <p>I'm a licensed therapist and a registered art therapist, so the research backs this up. But in this space, I show up as a fellow artist first, not a clinician. I still keep a sketchbook of my own, and I still need it.</p>
+          </div>
+          <p style="margin-top:1.6rem;"><a class="btn" href="about.html">Learn more about Bethanie →</a></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. ART & ALCHEMY -->
+    <section class="section">
+      <div class="wrap split">
+        <div class="split__media">
+          <img src="images/web/photo-7573.jpg" alt="Overhead view of Bethanie drawing with colorful oil pastels" />
+        </div>
+        <div class="split__body">
+          <h2>Art &amp; Alchemy</h2>
+          <div class="prose" style="margin-top:1.2rem;">
+            <p>Alchemists spent their whole lives trying to turn lead into gold. Most people thought they were wasting their time. They knew something the rest of us forget, that the raw, ugly material is exactly where the gold comes from.</p>
+            <p>You're doing the same work every time you sit down and create. The lead is whatever you've been carrying. The gold is what's left after you finally let it out.</p>
+            <p class="italic">Art and alchemy were never really two different things.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. MINDFUL MOON -->
+    <section class="section section--alt">
+      <div class="wrap split split--reverse">
+        <div class="split__media">
+          <img src="images/web/photo-7550.jpg" alt="Bethanie sitting cross-legged and smiling, paintings behind her" />
+        </div>
+        <div class="split__body">
+          <h2>Mindful Moon</h2>
+          <div class="prose" style="margin-top:1.2rem;">
+            <p class="italic">"The sun heals me, but the moon feels me."</p>
+            <p>There's a version of you that only shows up at night, when the house goes quiet and nobody's watching and you can finally stop holding your face together. This space is for that version of you.</p>
+            <p>Sun healing is the easy kind, vitamin D, a walk, a green smoothie. Moon healing is what happens when you're alone with everything you carried all day and you finally let it land.</p>
+            <p class="italic">That's the moon in Mindful Moon.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. CLOSING CTA -->
+    <section class="cta-band cta-band--banner" style="background-image:url('images/web/banner.png');">
+      <div class="wrap">
+        <h2>Connect through Creativity</h2>
+        <a class="btn" href="https://www.skool.com/portals-8012/about" target="_blank" rel="noopener">Join the Community →</a>
+      </div>
+    </section>
+
   </main>
+
+  <!-- ============================================================
+       SITE FOOTER  (identical on every page — keep in sync)
+       ============================================================ -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="site-footer__top">
+        <div class="site-footer__links">
+          <a href="https://www.psychologytoday.com/profile/1605744" target="_blank" rel="noopener">Psychology Today</a>
+          <a href="http://www.instagram.com/mindfulmoontherapy" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://www.facebook.com/groups/creativecoworkingcommunity" target="_blank" rel="noopener">Facebook</a>
+        </div>
+        <div class="site-footer__social">
+          <a href="http://www.instagram.com/mindfulmoontherapy" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5.5"/><circle cx="12" cy="12" r="4"/><line x1="17.5" y1="6.5" x2="17.5" y2="6.5" stroke-width="2.2"/></svg>
+          </a>
+          <a href="https://www.facebook.com/groups/creativecoworkingcommunity" target="_blank" rel="noopener" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="site-footer__legal">
+        <p class="disclaimer">ALL INFORMATION, RESOURCES, WRITING, BLOG POSTS, AND MATERIAL OFFERED/PROVIDED ON THIS SITE ARE NOT INTENDED TO BE, ACT AS, OR REPLACE THERAPY, MENTAL HEALTH SERVICES, OR PSYCHOLOGICAL/MEDICAL ADVICE. IT DOES NOT CONSTITUTE A PROVIDER/PATIENT RELATIONSHIP. FOR QUESTIONS, SUPPORT, AND/OR HELP REGARDING MENTAL HEALTH AND MEDICAL NEEDS, YOU SHOULD CONSULT WITH A MENTAL HEALTH PROVIDER.</p>
+        <p class="land">We acknowledge today's Lenape communities, including Lenape people who belong to the Delaware Nation and Delaware Tribe of Indians in Oklahoma; the Stockbridge-Munsee Community in Wisconsin; and the Munsee-Delaware Nation, Moravian of the Thames First Nation, and Delaware of Six Nations in Ontario.</p>
+        <p class="copyright">© 2026 All rights reserved. Mindful Moon Therapy</p>
+      </div>
+    </div>
+  </footer>
+  <!-- ==== /SITE FOOTER ==== -->
+
+  <!-- Mobile nav toggle (identical on every page — keep in sync) -->
+  <script>
+    (function () {
+      var toggle = document.querySelector('.nav__toggle');
+      var nav = document.getElementById('site-nav');
+      if (!toggle || !nav) return;
+      toggle.addEventListener('click', function () {
+        var open = nav.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      });
+    })();
+  </script>
+
 </body>
 </html>
