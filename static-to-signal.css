@@ -37,6 +37,7 @@
 html { scroll-behavior: smooth; }
 
 body {
+  position: relative;   /* containing block for the static field */
   background: var(--bg);
   color: var(--cream);
   font-family: var(--sans);
@@ -48,7 +49,10 @@ body {
   overflow-x: hidden;
 }
 
-img { max-width: 100%; display: block; }
+/* height:auto is load-bearing — the images carry width/height attributes so
+   the browser can reserve space before they load, and without it they render
+   at their literal pixel height. */
+img { max-width: 100%; height: auto; display: block; }
 
 a { color: var(--bright); text-decoration: none; }
 
@@ -112,45 +116,62 @@ summary:focus-visible {
 }
 
 /* =========================================================================
-   HERO  — the signature "static to signal" moment
-   ========================================================================= */
-.hero {
-  position: relative;
-  overflow: hidden;
-  padding: clamp(4.5rem, 12vw, 8rem) 0 clamp(2.8rem, 7vw, 4.5rem);
-  isolation: isolate;
-}
+   THE STATIC FIELD — the signature "static to signal" moment
 
-/* Static field: dense at the very top, dissolving to nothing before it
-   reaches the body copy — text always sits on solid navy. */
-.hero__static {
+   One page-level field rather than a box inside the hero: the noise is
+   dense at the very top of the page and dissolves as you scroll down into
+   the reading, so the concept is the layout logic, not just a hero effect.
+
+   Three stacked layers:
+     base      — the CRT photograph, colour bleed and all
+     ::after   — fine SVG grain, the part that shimmers
+     ::before  — scanlines, clearing fastest of the three
+
+   All of it is decorative and aria-hidden in the markup. The mask takes it
+   to zero well before the body copy starts, so text never competes with it.
+   ========================================================================= */
+.static-field {
   position: absolute;
-  inset: 0;
-  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 900px;          /* fixed, not vh — the falloff has to line up with
+                             where the copy starts, not with the window */
+  z-index: 0;
   pointer-events: none;
+  overflow: hidden;
+  /* One pass of the CRT photograph across the top only — tiling it left a
+     visible seam. Its bottom edge lands where the mask has already faded it
+     out, and the grain layer carries the texture the rest of the way down. */
   background-image: url("images/static-to-signal/static.png");
-  background-size: cover;
+  background-size: 100% 620px;
+  background-repeat: no-repeat;
   background-position: center top;
   opacity: 0.5;
+  /* Dense at the very top, effectively gone by the time the body copy
+     starts (~390px in), fully clear well before the first section. */
   -webkit-mask-image: linear-gradient(to bottom,
-              #000 0%, rgba(0,0,0,0.55) 32%, transparent 62%);
+              rgba(0,0,0,1) 0%, rgba(0,0,0,0.70) 13%, rgba(0,0,0,0.26) 33%,
+              rgba(0,0,0,0.11) 47%, rgba(0,0,0,0.04) 71%, transparent 100%);
           mask-image: linear-gradient(to bottom,
-              #000 0%, rgba(0,0,0,0.55) 32%, transparent 62%);
+              rgba(0,0,0,1) 0%, rgba(0,0,0,0.70) 13%, rgba(0,0,0,0.26) 33%,
+              rgba(0,0,0,0.11) 47%, rgba(0,0,0,0.04) 71%, transparent 100%);
 }
-/* Fine animated grain (SVG noise) layered over the colour static for a
-   subtle CRT shimmer. Held still under prefers-reduced-motion. */
-.hero__static::after {
+/* Fine animated grain layered over the colour static for a subtle CRT
+   shimmer. Held completely still under prefers-reduced-motion. */
+.static-field::after {
   content: "";
   position: absolute;
   inset: -40%;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 150px 150px;
-  opacity: 0.28;
+  opacity: 0.3;
   mix-blend-mode: screen;
   animation: static-shimmer 0.6s steps(5) infinite;
 }
-/* Faint scanlines to sell the CRT feel */
-.hero__static::before {
+/* Scanlines. These clear first — by the time you're a screen down, the
+   picture has stopped being a broken signal. */
+.static-field::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -160,8 +181,16 @@ summary:focus-visible {
       rgba(0,0,0,0.10) 1px,
       transparent 1px,
       transparent 3px);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 55%);
-          mask-image: linear-gradient(to bottom, #000 0%, transparent 55%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 45%);
+          mask-image: linear-gradient(to bottom, #000 0%, transparent 45%);
+}
+
+/* The hero runs taller on wide screens, so the signal takes longer to clear. */
+@media (min-width: 720px) {
+  .static-field {
+    height: 1150px;
+    background-size: 100% 820px;
+  }
 }
 
 @keyframes static-shimmer {
@@ -169,7 +198,29 @@ summary:focus-visible {
   100% { transform: translate(-9px, 7px); }
 }
 
+/* Everything real sits above the field. */
+main,
+.site-footer { position: relative; z-index: 1; }
+
+/* =========================================================================
+   HERO
+   ========================================================================= */
+.hero {
+  position: relative;
+  padding: clamp(4.5rem, 12vw, 8rem) 0 clamp(2.8rem, 7vw, 4.5rem);
+}
+
 .hero__inner { max-width: 34rem; }
+/* Subheadline sits between the brand label and the headline, quieter
+   than both. */
+.hero__sub {
+  font-family: var(--sans);
+  font-size: clamp(1rem, 2.4vw, 1.12rem);
+  line-height: 1.55;
+  color: var(--muted);
+  max-width: 30rem;
+  margin-top: 0.9rem;
+}
 .hero h1 {
   font-size: clamp(2.5rem, 7vw, 4.3rem);
   line-height: 1.03;
@@ -214,16 +265,22 @@ summary:focus-visible {
    SECTIONS
    ========================================================================= */
 .section { padding: clamp(2.8rem, 7vw, 5rem) 0; }
-.section--alt { background: var(--bg-alt); }
+.section--alt { background: var(--bg-alt); position: relative; }
 .section h2 {
   font-size: clamp(1.9rem, 4.6vw, 2.9rem);
   text-wrap: balance;
+}
+/* Standalone section heading, for sections that aren't a two-column split */
+.section__head {
+  max-width: 22ch;
+  margin-bottom: clamp(1.8rem, 5vw, 2.6rem);
 }
 .section h2 + p { margin-top: 1.2rem; }
 .prose > p { margin-top: 1.15rem; }
 .prose > p:first-child { margin-top: 0; }
 .prose .lead { color: var(--muted); }
-.prose .emph { color: var(--bright); font-style: italic; }
+/* Standalone, not scoped to .prose — the hero body uses it too. */
+.emph { color: var(--bright); font-style: italic; }
 
 /* Two-column split (text + artwork) */
 .split {
@@ -240,6 +297,56 @@ summary:focus-visible {
 .split__body h2 { margin-bottom: 1.2rem; }
 
 /* =========================================================================
+   TESTIMONIALS ("People who have done this")
+   ========================================================================= */
+.voices {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem;
+}
+.voice {
+  background: var(--bg-alt);
+  border: 1px solid rgba(194, 191, 203, 0.18);
+  border-radius: var(--radius);
+  padding: 1.7rem 1.8rem;
+  /* The lime is an accent, not a fill — a single hairline edge per card. */
+  border-top: 2px solid var(--bright);
+}
+.section--alt .voice { background: var(--bg); }
+.voice p {
+  color: var(--cream);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+.voice cite {
+  display: block;
+  margin-top: 1.1rem;
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bright);
+}
+/* Single piece of artwork closing out the testimonials */
+.voices__media {
+  margin: clamp(1.8rem, 5vw, 2.6rem) auto 0;
+  max-width: 22rem;
+}
+.voices__media img {
+  width: 100%;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* Centred CTA sitting in the flow of a section */
+.cta-row {
+  margin-top: clamp(2rem, 5vw, 2.8rem);
+  text-align: center;
+}
+
+/* =========================================================================
    BANNER BANDS (the wide "cosmic circle" graphics)
    ========================================================================= */
 .banner-band { padding: 0; background: var(--black); }
@@ -252,7 +359,10 @@ summary:focus-visible {
 /* =========================================================================
    WEEKS (Thirty prompts, in an order that matters)
    ========================================================================= */
-.weeks { display: grid; gap: 1.1rem; margin-top: 2rem; }
+/* An ordered list, because the order genuinely is the point — the numbering
+   is carried by the "Week one/two/three/four" labels, so the markers are
+   hidden rather than duplicated. */
+.weeks { list-style: none; display: grid; gap: 1.1rem; margin-top: 2rem; }
 .week {
   background: var(--bg);
   border: 1px solid rgba(194, 191, 203, 0.18);
@@ -302,6 +412,16 @@ summary:focus-visible {
   display: block;
   margin-top: 0.4rem;
 }
+.offer__lead {
+  margin-top: 1.6rem;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.offer__cta { margin-top: 0.4rem; }
 .offer__list {
   list-style: none;
   text-align: left;
@@ -442,16 +562,27 @@ summary:focus-visible {
   body { font-size: 18px; }
 
   .split { grid-template-columns: 1fr 1fr; }
+  /* Artwork moves to the right on alternating sections. Source order stays
+     text-first so the reading order is correct without CSS. */
   .split--reverse .split__media { order: 2; }
 
   .do-dont { grid-template-columns: 1fr 1fr; }
+  .voices { grid-template-columns: 1fr 1fr; }
+
+  /* The weeks column is long; let its artwork ride alongside it. */
+  .split__media--sticky {
+    position: sticky;
+    top: 2.5rem;
+    align-self: start;
+  }
 }
 
 /* =========================================================================
-   REDUCED MOTION — the static must hold completely still
+   REDUCED MOTION — the static holds completely still
    ========================================================================= */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { transition: none !important; animation: none !important; }
-  .hero__static::after { animation: none; }
+  .static-field::after { animation: none !important; }
+  .split__media--sticky { position: static; }
 }

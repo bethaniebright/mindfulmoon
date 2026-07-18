@@ -11,3 +11,7 @@
 /images/*.jpg
 /images/*.png
 /images/*.PNG
+
+# Same policy for the Static to Signal originals. The optimized, renamed
+# copies the page actually uses are committed under images/static-to-signal/.
+/images/static to signal images/
