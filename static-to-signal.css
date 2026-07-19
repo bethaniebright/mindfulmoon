@@ -195,6 +195,12 @@ h2 { font-size: clamp(2rem, 8vw, 2.9rem); }
 .section h2 + .getlist,
 .section h2 + .price { margin-top: 1.5rem; }
 
+/* A photo sitting directly under its heading rather than closing the
+   section — the bio uses this. Tighter above than a section-closing image,
+   and the copy below it needs its own breathing room. */
+.section h2 + .shot { margin-top: clamp(1.6rem, 6vw, 2.2rem); }
+.shot + .prose { margin-top: clamp(1.8rem, 7vw, 2.4rem); }
+
 /* =========================================================================
    PULL-QUOTE BREAKS
 
@@ -397,6 +403,15 @@ a:focus-visible {
    CLOSER + FOOTER
    ========================================================================= */
 .closer { padding-bottom: clamp(3.5rem, 12vw, 5.5rem); }
+
+/* The last line on the page, under the final button. Cream rather than
+   muted — it is the closing statement, not supporting copy. */
+.closing {
+  margin: clamp(1.8rem, 7vw, 2.4rem) auto 0;
+  max-width: 32rem;
+  color: var(--cream);
+  text-wrap: balance;
+}
 
 .site-footer {
   background: var(--black);
