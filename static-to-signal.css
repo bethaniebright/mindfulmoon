@@ -132,15 +132,13 @@ h2 { font-size: clamp(2rem, 8vw, 2.9rem); }
 
 /* The lines the copy turns on. Serif and lime, so they read as a beat
    rather than as another paragraph. */
-.emph,
-.statement {
+.emph {
   font-family: var(--display);
   font-weight: 600;
   font-size: clamp(1.25rem, 5vw, 1.6rem);
   line-height: 1.3;
   color: var(--lime);
 }
-.statement { text-align: center; }
 
 /* Highlighted lead-in on the bio. Ends mid-sentence on purpose — it marks
    the introduction, not the clause. */
@@ -189,7 +187,6 @@ h2 { font-size: clamp(2rem, 8vw, 2.9rem); }
 .section--lift { background: var(--bg-lift); }
 .section--center { text-align: center; }
 .section--center .prose { max-width: 34rem; }
-.section--tight { padding: clamp(2rem, 7vw, 2.8rem) 0; }
 
 .section h2 + .prose,
 .section h2 + .getlist,
