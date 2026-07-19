@@ -21,7 +21,10 @@
 
 :root {
   --bg:        #201d42;
-  --bg-alt:    #272451;   /* slightly lifted panel background */
+  /* The lifted panel tone. Mixed 35% from #201d42 toward the palette violet
+     #51507b, so the "other" background on the page is a branded violet
+     rather than a neutral grey. */
+  --bg-alt:    #312f56;
   --accent:    #51507b;
   --lime:      #DCFC74;
   --lime-deep: #c5e650;   /* hover — darker lime, not a different colour */
@@ -46,21 +49,47 @@
      A lightening scanline would wash the navy toward grey and cost
      contrast against the cream text.
      ======================================================================= */
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.973 0 0 0 0 0.957 0 0 0 0 0.922 0.42 0.42 0.16 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  /* Four independent noise fields, each a different brand colour, each with
+     its own seed, frequency and tile size so they never line up into a
+     visible repeat. Stacked, they read as colour analog snow rather than
+     grey TV static.
 
-  /* Coarse grain for image surfaces, where texture can be much heavier. */
-  --grain-coarse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.973 0 0 0 0 0.957 0 0 0 0 0.922 0.5 0.4 0.1 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+     Each filter drives alpha from the turbulence luminance through a steep
+     offset (the negative constant in the alpha row), which thresholds the
+     field into flecks instead of an even wash. The colour channels are
+     pinned to a fixed palette value, so a fleck is always exactly one of
+     the brand colours — nothing off-palette can appear. */
+
+  /* Cream — the base field, densest of the four. */
+  --noise-cream: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.973 0 0 0 0 0.957 0 0 0 0 0.922 0.30 0.30 0.10 0 -0.20'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23a)'/%3E%3C/svg%3E");
+  /* Lavender-grey — mid-density, softens the cream. */
+  --noise-lav: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='210' height='210'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.761 0 0 0 0 0.749 0 0 0 0 0.796 0.40 0.40 0.14 0 -0.34'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23b)'/%3E%3C/svg%3E");
+  /* Violet — sits close to the background, adds depth rather than sparkle. */
+  --noise-violet: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='190' height='190'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.64' numOctaves='4' seed='19' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.318 0 0 0 0 0.314 0 0 0 0 0.482 0.45 0.45 0.15 0 -0.30'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+  /* Lime — the rarest field by a wide margin. This is the chroma spark that
+     stops the snow reading as grey; at this threshold only a few pixels per
+     tile survive, which is the intent. */
+  --noise-lime: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.863 0 0 0 0 0.988 0 0 0 0 0.455 0.55 0.55 0.18 0 -0.72'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23d)'/%3E%3C/svg%3E");
+
+  /* The full stack, rarest colour on top. */
+  --noise: var(--noise-lime), var(--noise-violet), var(--noise-lav), var(--noise-cream);
+  --noise-size: 150px 150px, 190px 190px, 210px 210px, 170px 170px;
+
+  /* Coarse version for image surfaces, where texture can be much heavier. */
+  --grain-coarse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='e'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' seed='23' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.973 0 0 0 0 0.957 0 0 0 0 0.922 0.5 0.4 0.1 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23e)'/%3E%3C/svg%3E");
 
   /* Tight scanlines — CRT line structure, used on image surfaces. */
   --scan: repeating-linear-gradient(to bottom,
             rgba(0,0,0,0.40) 0px, rgba(0,0,0,0.40) 1px,
             transparent 1px, transparent 3px);
   /* Wider, softer tape-head banding — used behind body copy. Darkening
-     only, so it can run at full strength everywhere without costing
-     legibility. */
+     only, so it costs no legibility. Deliberately held well down: this is
+     one layer of the effect, not the effect. When the banding is the
+     loudest thing on the page the result reads as a printed line screen
+     rather than as analog noise. */
   --scan-soft: repeating-linear-gradient(to bottom,
-            rgba(0,0,0,0.30) 0px, rgba(0,0,0,0.30) 2px,
-            transparent 2px, transparent 6px);
+            rgba(0,0,0,0.14) 0px, rgba(0,0,0,0.14) 2px,
+            transparent 2px, transparent 7px);
 
   /* Chroma misregistration. Analog colour-under bleed is red/cyan by
      nature, so these two sit outside the palette on purpose. They appear
@@ -401,16 +430,24 @@ main,
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background-image: var(--grain);
-  background-size: 170px 170px;
-  opacity: 0.42;
+  background-image: var(--noise);
+  background-size: var(--noise-size);
+  /* 0.46 through the seam bands, 0.40 of that (0.184) through the middle.
+     Those two numbers are not taste — the noise stack was rasterised to a
+     canvas, composited over both background tones, and the single lightest
+     pixel it can produce was measured. 0.184 is the most the middle band
+     can carry while that worst-case pixel still clears AA against the
+     muted body colour. Behind copy this is about 45% more noise than the
+     previous build carried, while the banding that used to dominate has
+     been cut by more than half. */
+  opacity: 0.46;
   -webkit-mask-image: linear-gradient(to bottom,
-      rgba(0,0,0,1) 0px, rgba(0,0,0,0.88) 30px, rgba(0,0,0,0.30) 88px,
-      rgba(0,0,0,0.30) calc(100% - 88px), rgba(0,0,0,0.88) calc(100% - 30px),
+      rgba(0,0,0,1) 0px, rgba(0,0,0,0.90) 30px, rgba(0,0,0,0.40) 88px,
+      rgba(0,0,0,0.40) calc(100% - 88px), rgba(0,0,0,0.90) calc(100% - 30px),
       rgba(0,0,0,1) 100%);
           mask-image: linear-gradient(to bottom,
-      rgba(0,0,0,1) 0px, rgba(0,0,0,0.88) 30px, rgba(0,0,0,0.30) 88px,
-      rgba(0,0,0,0.30) calc(100% - 88px), rgba(0,0,0,0.88) calc(100% - 30px),
+      rgba(0,0,0,1) 0px, rgba(0,0,0,0.90) 30px, rgba(0,0,0,0.40) 88px,
+      rgba(0,0,0,0.40) calc(100% - 88px), rgba(0,0,0,0.90) calc(100% - 30px),
       rgba(0,0,0,1) 100%);
 }
 
@@ -429,7 +466,7 @@ main,
   z-index: 1;
   pointer-events: none;
   background: var(--scan-soft);
-  opacity: 0.95;
+  opacity: 0.7;
 }
 
 /* Section seams. The join between two sections reads as a tape splice —
@@ -518,16 +555,28 @@ main,
    SECTIONS
    ========================================================================= */
 .section { padding: clamp(2.8rem, 7vw, 5rem) 0; }
-/* The lifted panel colour is eased into the base navy at the top and bottom
-   edges rather than butting against it. A hard seam between two colours
-   this close together reads as a rendering fault mid-scroll; a ~110px ramp
-   reads as the picture drifting, which is the effect we want anyway. */
+/* The lifted panel is a gradient, not a fill.
+
+   Previously this was a solid colour with a short ramp painted over each
+   end, which still left the ramp itself as a locatable band. Here the panel
+   colour only ever exists as a gradient stop: it starts at zero opacity
+   against the base navy, reaches full strength 26% into the section and
+   holds through the middle, then returns to zero. There is no flat region
+   meeting a non-flat one, so there is no edge to find at any scroll
+   position — including partway through a long quote.
+
+   Percentages rather than pixels, so short and tall sections both ramp
+   across a proportional distance instead of short ones ramping the whole
+   way through their own text. */
 .section--alt {
   position: relative;
-  background:
-    linear-gradient(to bottom, var(--bg) 0, rgba(32, 29, 66, 0) 110px),
-    linear-gradient(to top,    var(--bg) 0, rgba(32, 29, 66, 0) 110px),
-    var(--bg-alt);
+  background-image: linear-gradient(to bottom,
+      rgba(49, 47, 86, 0)    0%,
+      rgba(49, 47, 86, 0.55) 12%,
+      rgba(49, 47, 86, 1)    26%,
+      rgba(49, 47, 86, 1)    74%,
+      rgba(49, 47, 86, 0.55) 88%,
+      rgba(49, 47, 86, 0)    100%);
 }
 .section h2 {
   font-size: clamp(1.9rem, 4.6vw, 2.9rem);
