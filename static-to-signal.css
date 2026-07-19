@@ -92,23 +92,12 @@
   /* Coarse version for image surfaces, where texture can be much heavier. */
   --grain-coarse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='e'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' seed='23' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.973 0 0 0 0 0.957 0 0 0 0 0.922 0.5 0.4 0.1 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23e)'/%3E%3C/svg%3E");
 
-  /* Tight scanlines — CRT line structure, used on image surfaces. */
-  --scan: repeating-linear-gradient(to bottom,
-            rgba(0,0,0,0.40) 0px, rgba(0,0,0,0.40) 1px,
-            transparent 1px, transparent 3px);
-  /* Tape-head banding behind body copy.
-
-     Held very far down. A perfectly regular line screen is the one thing
-     on this page the eye locks onto immediately, and at any strength where
-     it is clearly visible it stops reading as analog noise and starts
-     reading as corduroy. It is a supporting layer only — the grain is what
-     should be legible as texture, and the banding just keeps the surface
-     from feeling flat. On a flat background the noise carries the effect;
-     the tight scanline structure lives on the image surfaces, where a CRT
-     line screen actually belongs. */
-  --scan-soft: repeating-linear-gradient(to bottom,
-            rgba(0,0,0,0.07) 0px, rgba(0,0,0,0.07) 2px,
-            transparent 2px, transparent 9px);
+  /* No scanline or banding tokens. Every repeating-line layer has been
+     removed from this page — off the artwork, off the banner bands, off
+     the section backgrounds and off the hero. A regular line screen reads
+     as corduroy rather than as analog noise, and over photographs it just
+     looked like the images had been striped. The texture is carried
+     entirely by the grain fields above. */
 
   /* Chroma misregistration. Analog colour-under bleed is red/cyan by
      nature, so these two sit outside the palette on purpose. They appear
@@ -299,49 +288,19 @@ summary:focus-visible {
   content: "";
   position: absolute;
   inset: -40%;
-  background-image: var(--grain-coarse), var(--grain);
-  background-size: 260px 260px, 170px 170px;
+  /* Was still pointing at --grain, which stopped existing when the noise was
+     rebuilt into separate colour fields. An invalid var() voids the whole
+     declaration, so this layer had been resolving to `none` and the hero
+     had quietly lost its grain. */
+  background-image: var(--grain-coarse), var(--noise);
+  background-size: 260px 260px, var(--noise-size);
   opacity: 0.5;
   animation: static-shimmer 0.55s steps(5) infinite,
              vhs-flicker 3.4s steps(1, end) infinite;
 }
-/* Scanlines plus the tape-head band. These clear first — by the time you
-   are a screen down, the picture has stopped being a broken signal. */
-.static-field::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: var(--scan);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.5) 28%, transparent 52%);
-          mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.5) 28%, transparent 52%);
-}
-
-/* -------------------------------------------------------------------------
-   The tape-head band: a bright, torn strip of mistracked signal that crawls
-   down through the hero. This is the single most VHS thing on the page, and
-   it lives entirely above the copy, in the empty upper band.
-   ------------------------------------------------------------------------- */
-.static-field__band {
-  position: absolute;
-  left: -6%;
-  right: -6%;
-  height: 46px;
-  top: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(to bottom,
-      transparent 0%,
-      rgba(248,244,235,0.05) 18%,
-      rgba(248,244,235,0.13) 42%,
-      rgba(248,244,235,0.05) 70%,
-      transparent 100%),
-    var(--grain-coarse);
-  background-size: auto, 200px 200px;
-  mix-blend-mode: screen;
-  opacity: 0.85;
-  animation: vhs-band 7.5s linear infinite;
-}
+/* The hero's scanline layer and the bright tape band that used to crawl
+   down through it are both gone. The band in particular read as a pale
+   stripe travelling across the page rather than as anything analog. */
 
 /* Tube curvature: the glass edge of the picture tube, on the hero backdrop
    only. It darkens the extreme corners of the *background*, well outside
@@ -365,7 +324,6 @@ summary:focus-visible {
     height: 1150px;
     background-size: 100% 820px;
   }
-  .static-field__band { height: 64px; }
 }
 
 @keyframes static-shimmer {
@@ -395,14 +353,6 @@ summary:focus-visible {
   79%      { opacity: 0.52; }
 }
 
-/* The mistracked band crawling down the picture. */
-@keyframes vhs-band {
-  0%   { top: -8%;  opacity: 0; }
-  6%   { opacity: 0.85; }
-  84%  { opacity: 0.7; }
-  92%  { opacity: 0; }
-  100% { top: 78%;  opacity: 0; }
-}
 
 /* Everything real sits above the field. */
 main,
@@ -504,34 +454,14 @@ main,
       rgba(0,0,0,1) 100%);
 }
 
-/* Tape-head banding. Wide and soft rather than tight scanlines: behind body
-   copy the tight line structure fights the text, this doesn't.
+/* The section banding layer is gone. Grain alone now carries the texture on
+   flat backgrounds, which is what the footer had been doing all along and
+   the reason it was the only surface that read correctly. */
 
-   This layer only ever darkens, so unlike the grain it costs no contrast
-   against cream text — it actually adds a little. That is why the banding
-   carries most of the page-wide analog presence and runs unmasked at full
-   strength everywhere, including directly behind copy. */
-.section::after,
-.final::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: var(--scan-soft);
-  opacity: 0.5;
-}
-
-/* Section seams. The join between two sections reads as a tape splice —
-   chroma pulling apart either side of the join. Sits in the gap between
-   sections, nowhere near text. */
-.section + .section::before,
-.section--alt::before {
-  box-shadow:
-    inset 0  1px 0 rgba(248, 244, 235, 0.08),
-    inset 0  2px 0 var(--chroma-cool),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
-}
+/* No seam rule. The chroma splice that used to sit on each section join was
+   still a hard horizontal line drawn across the full width of the page, and
+   with the panel colours now easing in and out as gradients there is no
+   join left for it to mark. */
 
 /* =========================================================================
    HERO
@@ -693,7 +623,9 @@ main,
      is slightly soft and oversaturated compared to the source. */
   filter: saturate(1.16) contrast(1.05) brightness(0.97);
 }
-/* Scanlines and grain over the picture.
+/* Grain over the picture — no scanlines. Striping a photograph reads as the
+   image being damaged rather than as an analog surface, so the artwork now
+   gets grain only.
 
    soft-light, not overlay. Overlay's response depends on the luminance of
    what is underneath it: on the near-black banner photographs it behaved,
@@ -707,10 +639,10 @@ main,
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background-image: var(--scan), var(--grain-coarse);
-  background-size: auto, 220px 220px;
+  background-image: var(--grain-coarse);
+  background-size: 220px 220px;
   mix-blend-mode: soft-light;
-  opacity: 0.92;
+  opacity: 0.85;
 }
 /* Tube curvature, edge chroma bleed and the glass vignette. */
 .split__media::after {
@@ -750,55 +682,23 @@ main,
   object-fit: cover;
   filter: saturate(1.2) contrast(1.08) brightness(0.95);
 }
-/* Scanlines + grain + the horizontal tear. The tear is a displaced slice
-   of the picture edge, sweeping down and re-locking. */
+/* Grain only, no scanlines — same treatment as the artwork frames. */
 .banner-band::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background-image: var(--scan), var(--grain-coarse);
-  background-size: auto, 230px 230px;
+  background-image: var(--grain-coarse);
+  background-size: 230px 230px;
   /* Same curve as the artwork frames — see .split__media::before. */
   mix-blend-mode: soft-light;
-  opacity: 1;
+  opacity: 0.95;
 }
-/* The tear itself: a bright mistracked slice crawling down the band. */
-.banner-band::after {
-  content: "";
-  position: absolute;
-  left: -8%;
-  right: -8%;
-  height: 28px;
-  z-index: 2;
-  pointer-events: none;
-  background:
-    linear-gradient(to bottom,
-      transparent 0%,
-      rgba(248,244,235,0.10) 30%,
-      rgba(248,244,235,0.22) 55%,
-      transparent 100%),
-    var(--grain-coarse);
-  background-size: auto, 180px 180px;
-  mix-blend-mode: screen;
-  box-shadow:
-    inset  3px 0 0 var(--chroma-warm),
-    inset -3px 0 0 var(--chroma-cool);
-  animation: vhs-tear 11s linear infinite;
-}
-
-/* A tear sweeping down and off the bottom of the picture. */
-@keyframes vhs-tear {
-  0%   { top: -12%; transform: translate3d(0,0,0);      opacity: 0; }
-  4%   {            transform: translate3d(-2.5%,0,0);  opacity: 0.9; }
-  9%   {            transform: translate3d(2%,0,0); }
-  14%  {            transform: translate3d(-1%,0,0); }
-  20%  {            transform: translate3d(0,0,0); }
-  70%  { opacity: 0.75; }
-  80%  { opacity: 0; }
-  100% { top: 105%; transform: translate3d(0,0,0);      opacity: 0; }
-}
+/* The tear that used to sweep down these bands is gone along with the hero's
+   crawling band — both read as a pale stripe travelling across the page
+   rather than as anything analog. The bands keep their grain and their
+   chroma edges, and hold still. */
 
 /* =========================================================================
    WEEKS (Thirty prompts, in an order that matters)
@@ -985,11 +885,6 @@ main,
   *,
   *::before,
   *::after { transition: none !important; animation: none !important; }
-
-  /* The two crawling artifacts are mid-sweep when frozen, which would park
-     a bright band across the picture. Park them off-screen instead. */
-  .static-field__band,
-  .banner-band::after { opacity: 0 !important; }
 
   .split__media--sticky { position: static; }
 }
