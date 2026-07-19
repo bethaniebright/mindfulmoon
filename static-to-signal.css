@@ -120,6 +120,12 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  /* Light text sitting over a noise field loses its edge where a bright
+     fleck lands against a glyph. A tight dark halo re-separates the
+     letterforms from whatever is behind them without altering the text
+     colour or the texture. Stacking already guarantees the noise is
+     behind; this is what makes it *read* as behind. */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
 }
 
 /* height:auto is load-bearing — the images carry width/height attributes so
@@ -175,6 +181,8 @@ h1, h2, h3 {
   line-height: 1.15;
   color: var(--bg);
   background: var(--lime);
+  /* Dark-on-light: the body halo would only muddy the label here. */
+  text-shadow: none;
   /* Slightly deeper lime edge so the button still has a defined shape
      against the pale fill rather than floating. */
   border: 1px solid var(--lime-deep);
@@ -401,13 +409,31 @@ main,
   isolation: isolate;
 }
 
-/* The reading layer. */
+/* -------------------------------------------------------------------------
+   THE LAYER SCALE
+
+   Explicit and page-wide, so this can't drift:
+
+       0   background texture (grain / noise fields)
+       1   tape banding and scanlines
+      10   the reading layer — all text, always
+
+   Every section sets `isolation: isolate`, so these numbers are scoped to
+   the section and no texture layer can ever escape its own section to land
+   on top of copy elsewhere. The gap between 1 and 10 is deliberate: any
+   texture layer added later has room to sit above the existing ones and
+   still be nowhere near the reading layer.
+
+   `position: relative` is load-bearing here — z-index is ignored on a
+   statically positioned element, so dropping it would silently drop the
+   text back into flow order behind the texture.
+   ------------------------------------------------------------------------- */
 .hero > .wrap,
 .section > .wrap,
 .final > .wrap,
 .site-footer > .wrap {
   position: relative;
-  z-index: 2;
+  z-index: 10;
 }
 
 /* Grain across the whole section.
@@ -442,12 +468,12 @@ main,
      been cut by more than half. */
   opacity: 0.46;
   -webkit-mask-image: linear-gradient(to bottom,
-      rgba(0,0,0,1) 0px, rgba(0,0,0,0.90) 30px, rgba(0,0,0,0.40) 88px,
-      rgba(0,0,0,0.40) calc(100% - 88px), rgba(0,0,0,0.90) calc(100% - 30px),
+      rgba(0,0,0,1) 0px, rgba(0,0,0,0.90) 30px, rgba(0,0,0,0.28) 88px,
+      rgba(0,0,0,0.28) calc(100% - 88px), rgba(0,0,0,0.90) calc(100% - 30px),
       rgba(0,0,0,1) 100%);
           mask-image: linear-gradient(to bottom,
-      rgba(0,0,0,1) 0px, rgba(0,0,0,0.90) 30px, rgba(0,0,0,0.40) 88px,
-      rgba(0,0,0,0.40) calc(100% - 88px), rgba(0,0,0,0.90) calc(100% - 30px),
+      rgba(0,0,0,1) 0px, rgba(0,0,0,0.90) 30px, rgba(0,0,0,0.28) 88px,
+      rgba(0,0,0,0.28) calc(100% - 88px), rgba(0,0,0,0.90) calc(100% - 30px),
       rgba(0,0,0,1) 100%);
 }
 
@@ -586,11 +612,14 @@ main,
 .prose > p { margin-top: 1.15rem; }
 .prose > p:first-child { margin-top: 0; }
 .prose .lead { color: var(--muted); }
-/* The punch line at the end of a section. Was lime; now cream at a slightly
-   larger size, so it still lands without competing with the buttons.
+/* The punch line at the end of a section, now carrying the lime. These are
+   the three moments the copy actually turns — "This is the thing that gets
+   you back", "You don't have to be good at art for it to be good for you",
+   "This is that way in" — so they are the natural place for the accent to
+   appear in text. Three instances across the page keeps it an accent.
    Standalone, not scoped to .prose — the hero body uses it too. */
 .emph {
-  color: var(--cream);
+  color: var(--lime);
   font-weight: 500;
   font-size: 1.08em;
   line-height: 1.5;
