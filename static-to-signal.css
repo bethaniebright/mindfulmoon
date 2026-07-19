@@ -429,41 +429,24 @@ main,
   pointer-events: none;
   background-image: var(--noise);
   background-size: var(--noise-size);
-  /* 0.46 through the seam bands, 0.40 of that (0.184) through the middle.
-     Those two numbers are not taste — the noise stack was rasterised to a
-     canvas, composited over both background tones, and the single lightest
-     pixel it can produce was measured. 0.184 is the most the middle band
-     can carry while that worst-case pixel still clears AA against the
-     muted body colour. Behind copy this is about 45% more noise than the
-     previous build carried, while the banding that used to dominate has
-     been cut by more than half. */
-  /* Two things were making the short sections at the foot of the page read
-     as a pale haze rather than as grain.
 
-     The layer was simply too strong at 0.72 — at that density the fields
-     stop resolving as separate flecks and read as fog.
+  /* No mask. This is the fix for the hard horizontal edge that kept
+     appearing partway through Carli's testimonial on iOS.
 
-     And the seam ramps were a fixed 70px at each end, which is fine in a
-     700px section and completely wrong in a 230px one: 140px of ramp left
-     almost nothing at the low value, so a short section ran at near full
-     strength end to end. The ramps are now capped with min() at a fraction
-     of the section height, so every section keeps a calm middle no matter
-     how short it is. */
-  opacity: 0.45;
-  -webkit-mask-image: linear-gradient(to bottom,
-      rgba(0,0,0,1) 0px,
-      rgba(0,0,0,0.78) min(24px, 8%),
-      rgba(0,0,0,0.28) min(70px, 22%),
-      rgba(0,0,0,0.28) calc(100% - min(70px, 22%)),
-      rgba(0,0,0,0.78) calc(100% - min(24px, 8%)),
-      rgba(0,0,0,1) 100%);
-          mask-image: linear-gradient(to bottom,
-      rgba(0,0,0,1) 0px,
-      rgba(0,0,0,0.78) min(24px, 8%),
-      rgba(0,0,0,0.28) min(70px, 22%),
-      rgba(0,0,0,0.28) calc(100% - min(70px, 22%)),
-      rgba(0,0,0,0.78) calc(100% - min(24px, 8%)),
-      rgba(0,0,0,1) 100%);
+     These layers span an entire section — the tall ones are well over
+     2000px. Safari rasterises a gradient mask over a layer that large in
+     bands, and where two bands meet it can leave a visible straight seam
+     at a position that corresponds to nothing in the layout. That is
+     exactly what the edge was: full bleed, dead straight, mid-paragraph,
+     not aligned to any element boundary, and invisible in Chromium, which
+     is why it survived several rounds of fixes aimed at the section
+     backgrounds.
+
+     The grain is now a single flat opacity across every surface. No
+     gradient for Safari to band, so the artifact cannot occur. It also
+     happens to be what was actually wanted: even grain everywhere, and no
+     bright seam bands stacking up at the foot of the page. */
+  opacity: 0.16;
 }
 
 /* The section banding layer is gone. Grain alone now carries the texture on
@@ -846,21 +829,9 @@ main,
   font-size: 0.88rem;
   line-height: 1.7;
 }
-/* The footer needs its own mask. The shared one ramps down over 70px at each
-   end, which assumes a section tall enough to have a middle; the footer is
-   short enough that its copy sits inside the ramp and ends up on the strong
-   part of the curve. It also has the most to lose — noise reads hardest
-   against near black, so the same density costs more contrast here than
-   anywhere else on the page. Short band at the seam, then flat and low
-   across the text. */
-.site-footer::before {
-  -webkit-mask-image: linear-gradient(to bottom,
-      rgba(0,0,0,1) 0px, rgba(0,0,0,0.70) 20px, rgba(0,0,0,0.20) 52px,
-      rgba(0,0,0,0.20) 100%);
-          mask-image: linear-gradient(to bottom,
-      rgba(0,0,0,1) 0px, rgba(0,0,0,0.70) 20px, rgba(0,0,0,0.20) 52px,
-      rgba(0,0,0,0.20) 100%);
-}
+/* The footer no longer needs its own mask. It existed to protect the footer
+   copy from the seam ramp; with the grain now a single flat opacity there
+   is no ramp anywhere to protect it from. */
 
 .site-footer .disclaimer { max-width: 70ch; color: var(--muted); }
 .site-footer .copyright { margin-top: 1.3rem; color: var(--cream); }
