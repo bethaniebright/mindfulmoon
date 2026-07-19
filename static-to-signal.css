@@ -1,118 +1,44 @@
 /* =========================================================================
    Static to Signal — standalone landing page
-   Part of Mindful Moon Therapy, but self-contained: not linked from the
-   main site and NOT sharing styles.css. Palette re-declared below so this
-   page stands on its own.
+
+   Self-contained: not linked from the main site and NOT sharing styles.css,
+   so the palette and type scale are declared here in full.
 
    Palette:
-     #201d42  main background (deep navy)
-     #51507b  muted violet — borders and structural accents
-     #DCFC74  lime — reserved for buttons. Everything else that used to be
-              lime has been pulled back to cream or violet so the lime
-              reads as "this is the thing you click."
-     #c2bfcb  soft lavender-grey (secondary text on dark)
-     #f8f4eb  off-white (body text / light — used instead of pure white)
-     #000000  black
+     #0f0f0f  page background (near black)
+     #161616  slight lift for alternating sections
+     #000000  the full-bleed pull-quote breaks
+     #DCFC74  lime — headings, emphasis, the note, buttons, hairlines
+     #f8f4eb  off-white — body copy and pull quotes
+     #c2bfcb  soft lavender-grey, secondary only
 
-   Type: Anton for headings and buttons (the closest free stand-in for
-   Gagalin — bold, condensed, poster-weight). Poppins for body copy.
-   Anton ships a single weight, so hierarchy comes from size and spacing.
+   Type: Fraunces for headings, pull quotes and emphasis. Poppins for body.
    ========================================================================= */
 
 :root {
-  --bg:        #201d42;
-  /* The alternating panel tone. It used to sit *lighter* than the base navy,
-     which is what made those sections feel washed out. It now sits darker,
-     so the alternating sections read as a recess rather than a lift. Still
-     violet-leaning rather than a neutral grey, and text contrast goes up
-     rather than down. */
-  --bg-alt:    #1b1938;
-  --accent:    #51507b;
-  --lime:      #DCFC74;
-  --lime-deep: #c5e650;   /* hover — darker lime, not a different colour */
-  --muted:     #c2bfcb;
-  --cream:     #f8f4eb;
+  --bg:        #0f0f0f;
+  --bg-lift:   #161616;
   --black:     #000000;
+  --lime:      #DCFC74;
+  --lime-deep: #c5e650;
+  --cream:     #f8f4eb;
+  --muted:     #c2bfcb;
 
-  --maxw: 940px;   /* narrower measure — this is a long read, not a grid */
-  --wide: 1160px;
-  --radius: 14px;
-  --shadow: 0 18px 44px rgba(0, 0, 0, 0.4);
+  --maxw: 40rem;    /* phone-first measure; this is a long read */
+  --radius: 10px;
 
-  /* =======================================================================
-     VHS TEXTURE TOKENS
-
-     Grain is tinted to the off-white #f8f4eb inside the SVG filter rather
-     than left as raw greyscale turbulence, which would have rendered as
-     white. The feColorMatrix pins RGB to the cream and drives alpha from
-     the noise luminance, so the grain is cream-on-transparent.
-
-     Scanlines are always black at partial alpha — they only ever darken.
-     A lightening scanline would wash the navy toward grey and cost
-     contrast against the cream text.
-     ======================================================================= */
-  /* Four independent noise fields, each a different brand colour, each with
-     its own seed, frequency and tile size so they never line up into a
-     visible repeat. Stacked, they read as colour analog snow rather than
-     grey TV static.
-
-     Each filter drives alpha from the turbulence luminance through a steep
-     offset (the negative constant in the alpha row), which thresholds the
-     field into flecks instead of an even wash. The colour channels are
-     pinned to a fixed palette value, so a fleck is always exactly one of
-     the brand colours — nothing off-palette can appear. */
-
-  /* Cream — the base field, densest of the four. */
-  --noise-cream: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.973 0 0 0 0 0.957 0 0 0 0 0.922 0.30 0.30 0.10 0 -0.20'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23a)'/%3E%3C/svg%3E");
-  /* Lavender-grey — mid-density, softens the cream. */
-  --noise-lav: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='210' height='210'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.761 0 0 0 0 0.749 0 0 0 0 0.796 0.40 0.40 0.14 0 -0.34'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23b)'/%3E%3C/svg%3E");
-  /* Violet — sits close to the background, adds depth rather than sparkle. */
-  --noise-violet: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='190' height='190'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.64' numOctaves='4' seed='19' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.318 0 0 0 0 0.314 0 0 0 0 0.482 0.45 0.45 0.15 0 -0.30'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
-  /* Lime — the rarest field by a wide margin. This is the chroma spark that
-     stops the snow reading as grey; at this threshold only a few pixels per
-     tile survive, which is the intent. */
-  --noise-lime: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.863 0 0 0 0 0.988 0 0 0 0 0.455 0.55 0.55 0.18 0 -0.72'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23d)'/%3E%3C/svg%3E");
-
-  /* Black — the field that makes the grain actually read.
-
-     Every other field here is lighter than the background, so on the near
-     black footer the noise pops and on the navy sections it barely
-     registers: all the flecks were pushing the same direction, and against
-     a mid tone there is very little room to push. Real analog noise varies
-     both ways. This field adds the dark half, so grain now reads as grain
-     on any background tone rather than only on the dark ones.
-
-     It also costs nothing in legibility — it only ever darkens, which is
-     the direction that helps light text. */
-  --noise-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.80' numOctaves='3' seed='31' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.48 0.48 0.16 0 -0.26'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
-
-  /* The full stack, rarest colour on top. */
-  --noise: var(--noise-lime), var(--noise-violet), var(--noise-lav),
-           var(--noise-cream), var(--noise-dark);
-  --noise-size: 150px 150px, 190px 190px, 210px 210px, 170px 170px, 160px 160px;
-
-  /* Coarse version for image surfaces, where texture can be much heavier. */
-  --grain-coarse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='e'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' seed='23' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.973 0 0 0 0 0.957 0 0 0 0 0.922 0.5 0.4 0.1 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23e)'/%3E%3C/svg%3E");
-
-  /* No scanline or banding tokens. Every repeating-line layer has been
-     removed from this page — off the artwork, off the banner bands, off
-     the section backgrounds and off the hero. A regular line screen reads
-     as corduroy rather than as analog noise, and over photographs it just
-     looked like the images had been striped. The texture is carried
-     entirely by the grain fields above. */
-
-  /* Chroma misregistration. Analog colour-under bleed is red/cyan by
-     nature, so these two sit outside the palette on purpose. They appear
-     only as sub-pixel fringing at low alpha, never as fills. */
-  --chroma-warm: rgba(255, 58, 58, 0.30);
-  --chroma-cool: rgba(58, 224, 255, 0.26);
-
-  /* Condensed grotesques as fallbacks so the poster proportions survive
-     if Anton hasn't loaded yet. */
-  --display: "Anton", "Haettenschweiler", "Arial Narrow Bold",
-             "Helvetica Neue Condensed", Impact, sans-serif;
+  --display: "Fraunces", "Iowan Old Style", Palatino, Georgia, serif;
   --sans: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           Helvetica, Arial, sans-serif;
+
+  /* Film grain, baked to a 256px raster rather than generated with an SVG
+     filter. Live feTurbulence filters are evaluated at paint time, and iOS
+     Safari re-evaluates them per compositing tile on a tall element — each
+     tile lands on a different filter origin, which left a hard full-width
+     seam partway down long sections. A bitmap has nothing to re-evaluate,
+     so every tile is byte-identical and no seam can appear. The tile is
+     per-pixel noise, so it also repeats seamlessly by construction. */
+  --grain: url("images/static-to-signal/grain.png");
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -120,115 +46,242 @@
 html { scroll-behavior: smooth; }
 
 body {
-  position: relative;   /* containing block for the static field */
   background: var(--bg);
   color: var(--cream);
   font-family: var(--sans);
   font-size: 17px;
-  font-weight: 400;
-  line-height: 1.72;
+  line-height: 1.75;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
-  /* Light text sitting over a noise field loses its edge where a bright
-     fleck lands against a glyph. A tight dark halo re-separates the
-     letterforms from whatever is behind them without altering the text
-     colour or the texture. Stacking already guarantees the noise is
-     behind; this is what makes it *read* as behind. */
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
 }
 
-/* height:auto is load-bearing — the images carry width/height attributes so
-   the browser can reserve space before they load, and without it they render
-   at their literal pixel height. */
 img { max-width: 100%; height: auto; display: block; }
 
-a { color: var(--lime); text-decoration: none; }
+a { color: var(--lime); }
 
-/* Anton is a single-weight display face. Its default tracking is tight for
-   a condensed poster face, so a touch of positive letter-spacing keeps long
-   headings from packing together. Sentence case, not caps — Anton is heavy
-   enough that a full-caps sentence turns into a wall. */
-h1, h2, h3 {
-  font-family: var(--display);
-  font-weight: 400;
-  line-height: 1.04;
-  letter-spacing: 0.005em;
-  /* Chroma misregistration plus tube bloom. This is a colour effect on the
-     glyphs themselves, not a texture laid over them — the letterforms stay
-     solid cream, so contrast is untouched. Offsets are sub-pixel at these
-     display sizes; anything larger starts to smear. */
-  text-shadow:
-    -0.018em 0 0 var(--chroma-warm),
-     0.018em 0 0 var(--chroma-cool),
-     0 0 0.42em rgba(248, 244, 235, 0.20);
+.wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
 
-.wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 1.4rem; }
-.wrap--wide { max-width: var(--wide); }
+/* =========================================================================
+   LAYER SCALE
 
-/* ---------- Eyebrow / small label ----------
-   Was lime; pulled back to cream so the buttons own the lime. */
-.eyebrow {
-  font-family: var(--sans);
-  text-transform: uppercase;
-  letter-spacing: 0.24em;
-  font-size: 0.72rem;
+       0   grain
+      10   the reading layer — all text, always
+
+   Every section isolates, so these are scoped and no grain layer can ever
+   escape onto copy elsewhere. `position: relative` on the wrap is
+   load-bearing: z-index is ignored on a static element, so removing it
+   would silently drop text behind the texture.
+   ========================================================================= */
+.hero,
+.section,
+.break,
+.site-footer {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero > .wrap,
+.section > .wrap,
+.break > .wrap,
+.site-footer > .wrap {
+  position: relative;
+  z-index: 10;
+}
+
+/* Grain sits behind the copy at a flat opacity — no gradients, nothing for
+   a mobile browser to band. Lighter behind paragraphs, heavier on the
+   black break blocks where there is less text to protect. */
+.hero::before,
+.section::before,
+.site-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--grain);
+  background-size: 256px 256px;
+  opacity: 0.5;
+}
+
+/* =========================================================================
+   TYPE
+   ========================================================================= */
+h1, h2 {
+  font-family: var(--display);
   font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  color: var(--lime);
+  text-wrap: balance;
+}
+
+h1 { font-size: clamp(2.3rem, 9vw, 3.4rem); }
+h2 { font-size: clamp(2rem, 8vw, 2.9rem); }
+
+.prose > p { margin-top: 1.4rem; }
+.prose > p:first-child { margin-top: 0; }
+.prose--after { margin-top: 1.6rem; }
+.prose--center { margin-inline: auto; }
+
+/* The lines the copy turns on. Serif and lime, so they read as a beat
+   rather than as another paragraph. */
+.emph,
+.statement {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.25rem, 5vw, 1.6rem);
+  line-height: 1.3;
+  color: var(--lime);
+}
+.statement { text-align: center; }
+
+/* Highlighted lead-in on the bio. Ends mid-sentence on purpose — it marks
+   the introduction, not the clause. */
+.hl { color: var(--lime); }
+
+/* The "what this is and isn't" note. */
+.note {
+  font-style: italic;
+  color: var(--lime);
+  font-size: 0.97rem;
+  line-height: 1.65;
+}
+
+/* =========================================================================
+   HERO
+   ========================================================================= */
+.hero { padding: clamp(3.2rem, 12vw, 5.5rem) 0 clamp(3rem, 10vw, 4.5rem); }
+
+.eyebrow {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.7rem, 7vw, 2.3rem);
+  line-height: 1.1;
+  color: var(--lime);
+  text-align: center;
+}
+.hero__sub {
+  margin-top: 0.7rem;
+  text-align: center;
+  color: var(--cream);
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+.hero h1 { margin-top: clamp(2rem, 8vw, 3rem); }
+.hero .prose { margin-top: 1.5rem; }
+
+/* =========================================================================
+   SECTIONS
+
+   A thin lime hairline marks each section edge, as in the mockup.
+   ========================================================================= */
+.section {
+  padding: clamp(3.2rem, 11vw, 5rem) 0;
+  border-top: 1px solid rgba(220, 252, 116, 0.55);
+}
+.section--lift { background: var(--bg-lift); }
+.section--center { text-align: center; }
+.section--center .prose { max-width: 34rem; }
+.section--tight { padding: clamp(2rem, 7vw, 2.8rem) 0; }
+
+.section h2 + .prose,
+.section h2 + .getlist,
+.section h2 + .price { margin-top: 1.5rem; }
+
+/* =========================================================================
+   PULL-QUOTE BREAKS
+
+   Full-bleed, pure black, and the only place the grain is allowed to be
+   loud. These carry the section rhythm in place of decorative banners.
+   ========================================================================= */
+.break {
+  background: var(--black);
+  border-top: 1px solid rgba(220, 252, 116, 0.55);
+  padding: clamp(3.5rem, 13vw, 6rem) 0;
+}
+.break::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--grain);
+  background-size: 256px 256px;
+  opacity: 0.85;
+  animation: grain-drift 8s steps(6, end) infinite;
+}
+.break blockquote p {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.7rem, 7.2vw, 2.5rem);
+  line-height: 1.16;
+  letter-spacing: -0.015em;
+  color: var(--cream);
+  text-wrap: pretty;
+}
+.break cite {
+  display: block;
+  margin-top: 1.6rem;
+  font-family: var(--display);
+  font-style: normal;
+  font-size: clamp(1.05rem, 4vw, 1.25rem);
   color: var(--cream);
 }
 
-/* ---------- Buttons (Start Static to Signal — $99) ----------
-   Lime fill with navy text: 13.85:1, well clear of AA. Light text on this
-   lime would fail badly, so the dark text is not optional. */
+/* A slow crawl across the grain tile. Texture only — it never touches the
+   copy, which sits ten layers above it. */
+@keyframes grain-drift {
+  0%   { background-position: 0 0; }
+  100% { background-position: 256px 128px; }
+}
+
+/* =========================================================================
+   BUTTONS
+   ========================================================================= */
+.cta { margin-top: clamp(2rem, 8vw, 2.6rem); }
+
 .btn {
-  display: inline-block;
-  font-family: var(--display);
-  font-weight: 400;
-  font-size: clamp(0.95rem, 2.2vw, 1.12rem);
+  display: block;
+  width: 100%;
+  max-width: 23rem;
+  margin-inline: auto;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.045em;
-  line-height: 1.15;
+  text-align: center;
+  text-decoration: none;
+  /* Near-black on lime: 15.5:1. Light text on this lime would fail badly,
+     so the dark label is not optional. */
   color: var(--bg);
   background: var(--lime);
-  /* Dark-on-light: the body halo would only muddy the label here. */
-  text-shadow: none;
-  /* Slightly deeper lime edge so the button still has a defined shape
-     against the pale fill rather than floating. */
   border: 1px solid var(--lime-deep);
-  padding: 0.95rem 2rem;
+  padding: 1.05rem 1.6rem;
   border-radius: 999px;
   cursor: pointer;
-  text-align: center;
   transition: transform 0.15s ease, background 0.2s ease,
               border-color 0.2s ease, box-shadow 0.2s ease;
 }
-/* Tube bloom: a bright element on a CRT halates into the surrounding
-   phosphor. The button text stays flat navy on flat lime — the glow is
-   thrown outward, never across the label. */
-.btn {
-  box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.35),
-    0 0 18px rgba(220, 252, 116, 0.30),
-    0 0 44px rgba(220, 252, 116, 0.14);
-}
-/* Hover darkens the lime rather than changing colour. Text stays navy. */
+/* Hover darkens the lime rather than changing colour. */
 .btn:hover {
   background: var(--lime-deep);
   border-color: var(--lime-deep);
   transform: translateY(-2px);
-  box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.35),
-    0 10px 26px rgba(197, 230, 80, 0.30),
-    0 0 26px rgba(197, 230, 80, 0.34),
-    0 0 56px rgba(197, 230, 80, 0.16);
+  box-shadow: 0 10px 30px rgba(197, 230, 80, 0.22);
 }
 .btn:active { transform: translateY(0); }
 
-/* Visible keyboard focus. Buttons need a cream ring — a lime ring on a lime
-   button is invisible. Other links keep the lime ring against the navy. */
-a:focus-visible,
-summary:focus-visible {
+/* Visible keyboard focus. Buttons take a cream ring — a lime ring on a
+   lime button is invisible. Links elsewhere keep the lime ring. */
+a:focus-visible {
   outline: 3px solid var(--lime);
   outline-offset: 3px;
   border-radius: 4px;
@@ -240,634 +293,136 @@ summary:focus-visible {
 }
 
 /* =========================================================================
-   THE STATIC FIELD — the signature "static to signal" moment
-
-   One page-level field rather than a box inside the hero: the noise is
-   dense at the very top of the page and dissolves as you scroll down into
-   the reading, so the concept is the layout logic, not just a hero effect.
-
-   Three stacked layers:
-     base      — the CRT photograph, colour bleed and all
-     ::after   — fine SVG grain, the part that shimmers
-     ::before  — scanlines, clearing fastest of the three
-
-   All of it is decorative and aria-hidden in the markup. The mask takes it
-   to zero well before the body copy starts, so text never competes with it.
+   WEEKS
    ========================================================================= */
-.static-field {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 900px;          /* fixed, not vh — the falloff has to line up with
-                             where the copy starts, not with the window */
-  z-index: 0;
-  pointer-events: none;
-  overflow: hidden;
-  /* One pass of the CRT photograph across the top only — tiling it left a
-     visible seam. Its bottom edge lands where the mask has already faded it
-     out, and the grain layer carries the texture the rest of the way down. */
-  background-image: url("images/static-to-signal/static.png");
-  background-size: 100% 620px;
-  background-repeat: no-repeat;
-  background-position: center top;
-  opacity: 0.58;
-  /* Dense at the very top, effectively gone by the time the body copy
-     starts (~390px in), fully clear well before the first section. */
-  -webkit-mask-image: linear-gradient(to bottom,
-              rgba(0,0,0,1) 0%, rgba(0,0,0,0.70) 13%, rgba(0,0,0,0.26) 33%,
-              rgba(0,0,0,0.11) 47%, rgba(0,0,0,0.04) 71%, transparent 100%);
-          mask-image: linear-gradient(to bottom,
-              rgba(0,0,0,1) 0%, rgba(0,0,0,0.70) 13%, rgba(0,0,0,0.26) 33%,
-              rgba(0,0,0,0.11) 47%, rgba(0,0,0,0.04) 71%, transparent 100%);
-  /* The head drifting off the tape track — the whole field shears sideways
-     every few seconds, then re-locks. */
-  animation: vhs-tracking 9s steps(1, end) infinite;
-}
-/* Dense grain, flickering. Sits above the colour static but still behind
-   all copy, and the mask keeps it off the reading area entirely. */
-.static-field::after {
-  content: "";
-  position: absolute;
-  inset: -40%;
-  /* Was still pointing at --grain, which stopped existing when the noise was
-     rebuilt into separate colour fields. An invalid var() voids the whole
-     declaration, so this layer had been resolving to `none` and the hero
-     had quietly lost its grain. */
-  background-image: var(--grain-coarse), var(--noise);
-  background-size: 260px 260px, var(--noise-size);
-  opacity: 0.5;
-  animation: static-shimmer 0.55s steps(5) infinite,
-             vhs-flicker 3.4s steps(1, end) infinite;
-}
-/* The hero's scanline layer and the bright tape band that used to crawl
-   down through it are both gone. The band in particular read as a pale
-   stripe travelling across the page rather than as anything analog. */
-
-/* Tube curvature: the glass edge of the picture tube, on the hero backdrop
-   only. It darkens the extreme corners of the *background*, well outside
-   the text column, and never crosses the reading area. */
-.hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(120% 100% at 50% 46%,
-      transparent 58%, rgba(0,0,0,0.30) 88%, rgba(0,0,0,0.55) 100%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 92%);
-          mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 92%);
-}
-
-/* The hero runs taller on wide screens, so the signal takes longer to clear. */
-@media (min-width: 720px) {
-  .static-field {
-    height: 1150px;
-    background-size: 100% 820px;
-  }
-}
-
-@keyframes static-shimmer {
-  0%   { transform: translate(0, 0); }
-  100% { transform: translate(-9px, 7px); }
-}
-
-/* Tracking loss. Holds locked most of the cycle, then shears and re-locks —
-   irregular on purpose, since a tape that glitched on a metronome would
-   read as digital rather than analog. */
-@keyframes vhs-tracking {
-  0%, 74%   { transform: translate3d(0, 0, 0) skewX(0deg); }
-  75%       { transform: translate3d(-1.1%, 0, 0) skewX(0.5deg); }
-  76%       { transform: translate3d(0.8%, 0, 0) skewX(-0.35deg); }
-  77%       { transform: translate3d(-0.35%, 0, 0) skewX(0.15deg); }
-  78%, 95%  { transform: translate3d(0, 0, 0) skewX(0deg); }
-  96%       { transform: translate3d(0.55%, 0, 0) skewX(-0.2deg); }
-  97%, 100% { transform: translate3d(0, 0, 0) skewX(0deg); }
-}
-
-/* Luminance instability — the picture breathing as the AGC hunts. */
-@keyframes vhs-flicker {
-  0%, 100% { opacity: 0.50; }
-  22%      { opacity: 0.41; }
-  46%      { opacity: 0.55; }
-  61%      { opacity: 0.44; }
-  79%      { opacity: 0.52; }
-}
-
-
-/* Everything real sits above the field. */
-main,
-.site-footer { position: relative; z-index: 1; }
-
-/* =========================================================================
-   SECTION TEXTURE
-
-   Every section carries grain and tape banding, so the analog surface runs
-   the whole length of the page rather than being a hero-only trick.
-
-   The ordering rule that makes this safe: texture is painted by the
-   section's own pseudo-elements at z-index 0 and 1, and the content
-   wrapper is lifted to z-index 2. Texture is therefore always *behind*
-   the copy and never laid over a glyph. Nothing textural is ever stacked
-   above the reading layer anywhere on this page.
-   ========================================================================= */
-.hero,
-.section,
-.final,
-.site-footer {
-  position: relative;
-  isolation: isolate;
-}
-
-/* -------------------------------------------------------------------------
-   THE LAYER SCALE
-
-   Explicit and page-wide, so this can't drift:
-
-       0   background texture (grain / noise fields)
-       1   tape banding and scanlines
-      10   the reading layer — all text, always
-
-   Every section sets `isolation: isolate`, so these numbers are scoped to
-   the section and no texture layer can ever escape its own section to land
-   on top of copy elsewhere. The gap between 1 and 10 is deliberate: any
-   texture layer added later has room to sit above the existing ones and
-   still be nowhere near the reading layer.
-
-   `position: relative` is load-bearing here — z-index is ignored on a
-   statically positioned element, so dropping it would silently drop the
-   text back into flow order behind the texture.
-   ------------------------------------------------------------------------- */
-.hero > .wrap,
-.section > .wrap,
-.final > .wrap,
-.site-footer > .wrap {
-  position: relative;
-  z-index: 10;
-}
-
-/* Grain across the whole section.
-
-   The grain is the one component that *lightens*, so it is the only one
-   that can cost contrast. It is therefore driven much harder than before
-   but masked along the vertical axis: full strength through the section's
-   top and bottom padding — which is empty by construction, and is exactly
-   where one background colour meets the next — and pulled back to roughly
-   a third of that through the middle band where the copy actually sits.
-
-   The effect is that the texture intensifies at every colour transition on
-   the page and steps out of the way of the reading, automatically, without
-   anything being positioned by hand. */
-.section::before,
-.final::before,
-.site-footer::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image: var(--noise);
-  background-size: var(--noise-size);
-
-  /* No mask. This is the fix for the hard horizontal edge that kept
-     appearing partway through Carli's testimonial on iOS.
-
-     These layers span an entire section — the tall ones are well over
-     2000px. Safari rasterises a gradient mask over a layer that large in
-     bands, and where two bands meet it can leave a visible straight seam
-     at a position that corresponds to nothing in the layout. That is
-     exactly what the edge was: full bleed, dead straight, mid-paragraph,
-     not aligned to any element boundary, and invisible in Chromium, which
-     is why it survived several rounds of fixes aimed at the section
-     backgrounds.
-
-     The grain is now a single flat opacity across every surface. No
-     gradient for Safari to band, so the artifact cannot occur. It also
-     happens to be what was actually wanted: even grain everywhere, and no
-     bright seam bands stacking up at the foot of the page. */
-  opacity: 0.16;
-}
-
-/* The section banding layer is gone. Grain alone now carries the texture on
-   flat backgrounds, which is what the footer had been doing all along and
-   the reason it was the only surface that read correctly. */
-
-/* No seam rule. The chroma splice that used to sit on each section join was
-   still a hard horizontal line drawn across the full width of the page, and
-   with the panel colours now easing in and out as gradients there is no
-   join left for it to mark. */
-
-/* =========================================================================
-   HERO
-   ========================================================================= */
-.hero {
-  position: relative;
-  padding: clamp(4.5rem, 12vw, 8rem) 0 clamp(2.8rem, 7vw, 4.5rem);
-}
-
-.hero__inner { max-width: 34rem; }
-/* Subheadline sits between the brand label and the headline, quieter
-   than both. */
-.hero__sub {
-  font-family: var(--sans);
-  font-size: clamp(1rem, 2.4vw, 1.12rem);
-  line-height: 1.55;
-  color: var(--muted);
-  max-width: 30rem;
-  margin-top: 0.9rem;
-}
-.hero h1 {
-  font-size: clamp(2.5rem, 7vw, 4.3rem);
-  line-height: 1.03;
-  margin-top: 1.1rem;
-  text-wrap: balance;
-}
-.hero__body { color: var(--muted); }
-.hero__body p { margin-top: 1.2rem; }
-.hero__body p:first-child { margin-top: 1.6rem; }
-.hero__cta { margin-top: 2.2rem; }
-
-/* =========================================================================
-   PULL QUOTES
-   ========================================================================= */
-.pullquote {
-  max-width: 40rem;
-  margin: 2.6rem auto 0;
-  text-align: center;
-  border: 0;
-}
-/* Poppins italic, not Anton: Anton has no true italic, so the browser would
-   synthesise a slanted version of a heavy condensed face — and at quote size
-   a wall of Anton competes with the headings. */
-.pullquote p {
-  font-family: var(--sans);
-  font-style: italic;
-  font-weight: 400;
-  font-size: clamp(1.15rem, 2.9vw, 1.55rem);
-  line-height: 1.5;
-  color: var(--cream);
-}
-.pullquote cite {
-  display: block;
-  margin-top: 1rem;
-  font-family: var(--display);
-  font-style: normal;
-  font-size: 0.9rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-/* Inline pull quote within a section flow */
-.pullquote--inset { margin-top: 2.4rem; }
-
-/* The hero quote belongs to the hero's left-hand column. Centred across the
-   full wrap it drifted off on its own, disconnected from the copy above it. */
-.hero .pullquote {
-  max-width: 34rem;
-  margin: 2.8rem 0 0;
-  text-align: left;
-}
-
-/* =========================================================================
-   SECTIONS
-   ========================================================================= */
-.section { padding: clamp(2.8rem, 7vw, 5rem) 0; }
-/* The lifted panel is a gradient, not a fill.
-
-   Previously this was a solid colour with a short ramp painted over each
-   end, which still left the ramp itself as a locatable band. Here the panel
-   colour only ever exists as a gradient stop: it starts at zero opacity
-   against the base navy, reaches full strength 26% into the section and
-   holds through the middle, then returns to zero. There is no flat region
-   meeting a non-flat one, so there is no edge to find at any scroll
-   position — including partway through a long quote.
-
-   Percentages rather than pixels, so short and tall sections both ramp
-   across a proportional distance instead of short ones ramping the whole
-   way through their own text. */
-.section--alt {
-  position: relative;
-  background-image: linear-gradient(to bottom,
-      rgba(27, 25, 56, 0)    0%,
-      rgba(27, 25, 56, 0.55) 12%,
-      rgba(27, 25, 56, 1)    26%,
-      rgba(27, 25, 56, 1)    74%,
-      rgba(27, 25, 56, 0.55) 88%,
-      rgba(27, 25, 56, 0)    100%);
-}
-.section h2 {
-  font-size: clamp(1.9rem, 4.6vw, 2.9rem);
-  text-wrap: balance;
-}
-.section h2 + p { margin-top: 1.2rem; }
-.prose > p { margin-top: 1.15rem; }
-.prose > p:first-child { margin-top: 0; }
-.prose .lead { color: var(--muted); }
-/* The punch line at the end of a section, now carrying the lime. These are
-   the three moments the copy actually turns — "This is the thing that gets
-   you back", "You don't have to be good at art for it to be good for you",
-   "This is that way in" — so they are the natural place for the accent to
-   appear in text. Three instances across the page keeps it an accent.
-   Standalone, not scoped to .prose — the hero body uses it too. */
-.emph {
-  color: var(--lime);
-  font-weight: 500;
-  font-size: 1.08em;
-  line-height: 1.5;
-}
-
-/* The "what this is and isn't" note in the bio — deliberately quieter than
-   the copy around it, but not hidden. */
-.disclaimer-note {
-  margin-top: 1.6rem;
-  padding-left: 1.1rem;
-  border-left: 2px solid var(--accent);
-  color: var(--muted);
-  font-size: 0.94rem;
-  line-height: 1.65;
-}
-
-/* Two-column split (text + artwork) */
-.split {
+.weeks {
+  list-style: none;
+  margin-top: 1.8rem;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: clamp(1.6rem, 5vw, 3rem);
-  align-items: center;
+  gap: 1.2rem;
 }
-/* -------------------------------------------------------------------------
-   Artwork as a CRT screen.
-
-   Images carry no text, so this is where the aesthetic is pushed hardest:
-   tight scanlines, coarse grain, chroma misregistration on the left and
-   right edges, tube curvature and an edge vignette. The vignette is scoped
-   to the image surface only — it never runs across the page.
-   ------------------------------------------------------------------------- */
-.split__media {
-  position: relative;
-  isolation: isolate;
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
+.weeks li {
+  padding-left: 1.1rem;
+  border-left: 2px solid rgba(220, 252, 116, 0.45);
+  line-height: 1.7;
 }
-.split__media img {
-  width: 100%;
-  border-radius: 0;
-  box-shadow: none;
-  /* Analog colour-under: chroma resolution far below luma, so the picture
-     is slightly soft and oversaturated compared to the source. */
-  filter: saturate(1.16) contrast(1.05) brightness(0.97);
-}
-/* Grain over the picture — no scanlines. Striping a photograph reads as the
-   image being damaged rather than as an analog surface, so the artwork now
-   gets grain only.
-
-   soft-light, not overlay. Overlay's response depends on the luminance of
-   what is underneath it: on the near-black banner photographs it behaved,
-   but over bright artwork it drove everything to the top of the curve and
-   flattened whole images into grey plates. soft-light is the gentler
-   curve — it holds both ends, so dark banners keep their blacks and light
-   artwork keeps its colour, and the texture reads either way. */
-.split__media::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background-image: var(--grain-coarse);
-  background-size: 220px 220px;
-  mix-blend-mode: soft-light;
-  opacity: 0.85;
-}
-/* Tube curvature, edge chroma bleed and the glass vignette. */
-.split__media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  border-radius: var(--radius);
-  background:
-    radial-gradient(120% 130% at 50% 44%,
-      transparent 54%, rgba(0,0,0,0.34) 86%, rgba(0,0,0,0.62) 100%);
-  box-shadow:
-    inset  2px 0 0 var(--chroma-warm),
-    inset -2px 0 0 var(--chroma-cool),
-    inset  0 0 26px rgba(0, 0, 0, 0.45);
-}
-
-.split__body h2 { margin-bottom: 1.2rem; }
-
-/* =========================================================================
-   BANNER BANDS (the wide "cosmic circle" graphics)
-   ========================================================================= */
-/* Full-bleed, text-free, and therefore the heaviest surfaces on the page:
-   dense scanlines, coarse grain, chroma split at both edges and a tear
-   that rips across the picture on a long cycle. */
-.banner-band {
-  padding: 0;
-  background: var(--black);
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-}
-.banner-band img {
-  width: 100%;
-  max-height: 340px;
-  object-fit: cover;
-  filter: saturate(1.2) contrast(1.08) brightness(0.95);
-}
-/* Grain only, no scanlines — same treatment as the artwork frames. */
-.banner-band::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background-image: var(--grain-coarse);
-  background-size: 230px 230px;
-  /* Same curve as the artwork frames — see .split__media::before. */
-  mix-blend-mode: soft-light;
-  opacity: 0.95;
-}
-/* The tear that used to sweep down these bands is gone along with the hero's
-   crawling band — both read as a pale stripe travelling across the page
-   rather than as anything analog. The bands keep their grain and their
-   chroma edges, and hold still. */
-
-/* =========================================================================
-   WEEKS (Thirty prompts, in an order that matters)
-   ========================================================================= */
-/* An ordered list, because the order genuinely is the point — the numbering
-   is carried by the "Week 1/2/3/4" labels, so the markers are hidden
-   rather than duplicated. */
-.weeks { list-style: none; display: grid; gap: 1.1rem; margin-top: 2rem; }
-.week {
-  background: var(--bg);
-  border: 1px solid rgba(194, 191, 203, 0.18);
-  border-left: 3px solid var(--accent);
-  border-radius: var(--radius);
-  padding: 1.4rem 1.6rem;
-}
-.section--alt .week { background: var(--bg-alt); }
-/* Anton at small size, cream rather than lime. */
-.week__label {
+.weeks__n {
   font-family: var(--display);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 1.05rem;
-  color: var(--cream);
-  margin-bottom: 0.3rem;
+  font-weight: 700;
+  color: var(--lime);
 }
-.week p { color: var(--muted); }
-.section-close { margin-top: 2rem; }
-.section-close p { margin-top: 1.1rem; color: var(--muted); }
 
 /* =========================================================================
-   OFFER (The practice)
-   ========================================================================= */
-.offer {
-  background: var(--bg-alt);
-  border: 1px solid rgba(194, 191, 203, 0.2);
-  border-radius: var(--radius);
-  padding: clamp(1.8rem, 5vw, 3rem);
-  max-width: 40rem;
-  margin: 0 auto;
-  text-align: center;
-}
-.offer h2 { font-size: clamp(1.8rem, 4.4vw, 2.6rem); }
-/* Cream, not lime — the lime button sits directly beneath this, and two
-   lime elements stacked cancel each other out. */
-.offer__price {
-  font-family: var(--display);
-  font-size: clamp(2.6rem, 8vw, 3.6rem);
-  color: var(--cream);
-  line-height: 1;
-  margin: 1.1rem 0 0.2rem;
-}
-.offer__price span {
-  font-family: var(--sans);
-  font-size: 0.95rem;
-  letter-spacing: 0.06em;
-  color: var(--muted);
-  display: block;
-  margin-top: 0.5rem;
-}
-.offer__note {
-  margin-top: 1.2rem;
-  color: var(--muted);
-  font-size: 0.96rem;
-}
-.offer__cta { margin-top: 1.8rem; }
-
-/* =========================================================================
-   WHAT YOU GET (bulleted list)
+   WHAT YOU GET
    ========================================================================= */
 .getlist {
   list-style: none;
   display: grid;
-  gap: 0.95rem;
+  gap: 1.1rem;
   margin-top: 1.6rem;
 }
 .getlist li {
   position: relative;
-  padding-left: 1.9rem;
-  color: var(--cream);
+  padding-left: 1.7rem;
+  line-height: 1.65;
 }
-/* Violet dot rather than lime — small repeated marks in lime would dilute
-   the buttons. */
 .getlist li::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 0.62em;
-  width: 0.62rem;
-  height: 0.62rem;
+  top: 0.68em;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
-  background: var(--accent);
-  border: 1px solid rgba(194, 191, 203, 0.45);
+  background: var(--lime);
 }
 
 /* =========================================================================
-   GUARANTEE
+   PRICE
    ========================================================================= */
-.guarantee {
-  max-width: 34rem;
-  margin: 0 auto;
-  text-align: center;
-}
-.guarantee p { color: var(--muted); margin-top: 1.1rem; }
-.guarantee p:first-of-type { color: var(--cream); }
-
-/* =========================================================================
-   FINAL CTA
-   ========================================================================= */
-.final {
-  text-align: center;
-  padding: clamp(3.5rem, 9vw, 6rem) 0;
-  background: var(--bg-alt);
-}
-.final h2 { font-size: clamp(2rem, 5.2vw, 3.2rem); text-wrap: balance; }
-.final p { color: var(--muted); margin: 1.1rem 0 2rem; }
-/* The last line on the page, sitting below the button. Cream rather than
-   muted — it is the closing statement, not supporting copy. */
-.final__closing {
-  margin: 2.4rem auto 0;
-  max-width: 34rem;
+.price {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.7rem, 6.5vw, 2.2rem);
+  line-height: 1.2;
   color: var(--cream);
-  text-wrap: balance;
+}
+.price__note {
+  margin-top: 0.9rem;
+  color: var(--muted);
+  font-size: 0.97rem;
 }
 
 /* =========================================================================
-   FOOTER
+   IMAGES
    ========================================================================= */
+.shot {
+  margin-top: clamp(2.2rem, 8vw, 3rem);
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid rgba(248, 244, 235, 0.14);
+}
+.shot--narrow { max-width: 22rem; margin-inline: auto; }
+.shot img { width: 100%; }
+/* A little grain over the artwork so it sits in the same world as the page.
+   soft-light rather than normal: cream grain composited normally hazes the
+   blacks toward grey, and over bright artwork a harder curve blows it out. */
+.shot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: var(--grain);
+  background-size: 256px 256px;
+  mix-blend-mode: soft-light;
+  opacity: 0.7;
+}
+
+/* Full-bleed band */
+.band {
+  position: relative;
+  background: var(--black);
+  border-top: 1px solid rgba(220, 252, 116, 0.55);
+}
+.band img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+/* =========================================================================
+   CLOSER + FOOTER
+   ========================================================================= */
+.closer { padding-bottom: clamp(3.5rem, 12vw, 5.5rem); }
+
 .site-footer {
   background: var(--black);
-  color: var(--muted);
-  padding: clamp(2.4rem, 6vw, 3.5rem) 0 2.4rem;
-  font-family: var(--sans);
-  font-size: 0.88rem;
+  border-top: 1px solid rgba(220, 252, 116, 0.55);
+  padding: clamp(2.6rem, 9vw, 3.5rem) 0 2.6rem;
+  font-size: 0.87rem;
   line-height: 1.7;
 }
-/* The footer no longer needs its own mask. It existed to protect the footer
-   copy from the seam ramp; with the grain now a single flat opacity there
-   is no ramp anywhere to protect it from. */
-
-.site-footer .disclaimer { max-width: 70ch; color: var(--muted); }
+.site-footer .disclaimer { color: var(--muted); }
 .site-footer .copyright { margin-top: 1.3rem; color: var(--cream); }
 
 /* =========================================================================
-   RESPONSIVE — mobile-first base above; enhancements for wider screens
+   RESPONSIVE — phone-first above; the measure simply widens
    ========================================================================= */
-@media (min-width: 720px) {
+@media (min-width: 700px) {
   body { font-size: 18px; }
-
-  .split { grid-template-columns: 1fr 1fr; }
-  /* Source order is text-first in every split, so the reading order is right
-     on mobile and for screen readers without any CSS. On wide screens the
-     artwork is pulled to the left column on alternating sections, which is
-     the only thing `order` is doing here. */
-  .split--reverse .split__media { order: -1; }
-
-  /* The weeks column is long; let its artwork ride alongside it. */
-  .split__media--sticky {
-    position: sticky;
-    top: 2.5rem;
-    align-self: start;
-  }
+  :root { --maxw: 44rem; }
+  .band img { max-height: 380px; }
 }
 
 /* =========================================================================
-   REDUCED MOTION — the static holds completely still
+   REDUCED MOTION
    ========================================================================= */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  /* Every VHS animation stops dead: the tracking shear, the grain shimmer,
-     the flicker, the crawling tape band and the tear. The texture itself
-     stays — it is the design, and it is all static. Only the motion goes. */
   *,
   *::before,
   *::after { transition: none !important; animation: none !important; }
-
-  .split__media--sticky { position: static; }
 }
