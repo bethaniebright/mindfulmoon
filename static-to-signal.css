@@ -55,10 +55,11 @@
   --scan: repeating-linear-gradient(to bottom,
             rgba(0,0,0,0.40) 0px, rgba(0,0,0,0.40) 1px,
             transparent 1px, transparent 3px);
-  /* Wider, softer tape-head banding — used behind body copy, where it has
-     to stay well under the text contrast. */
+  /* Wider, softer tape-head banding — used behind body copy. Darkening
+     only, so it can run at full strength everywhere without costing
+     legibility. */
   --scan-soft: repeating-linear-gradient(to bottom,
-            rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 2px,
+            rgba(0,0,0,0.30) 0px, rgba(0,0,0,0.30) 2px,
             transparent 2px, transparent 6px);
 
   /* Chroma misregistration. Analog colour-under bleed is red/cyan by
@@ -380,7 +381,18 @@ main,
   z-index: 2;
 }
 
-/* Grain across the whole section. */
+/* Grain across the whole section.
+
+   The grain is the one component that *lightens*, so it is the only one
+   that can cost contrast. It is therefore driven much harder than before
+   but masked along the vertical axis: full strength through the section's
+   top and bottom padding — which is empty by construction, and is exactly
+   where one background colour meets the next — and pulled back to roughly
+   a third of that through the middle band where the copy actually sits.
+
+   The effect is that the texture intensifies at every colour transition on
+   the page and steps out of the way of the reading, automatically, without
+   anything being positioned by hand. */
 .section::before,
 .final::before,
 .site-footer::before {
@@ -391,11 +403,24 @@ main,
   pointer-events: none;
   background-image: var(--grain);
   background-size: 170px 170px;
-  opacity: 0.14;
+  opacity: 0.42;
+  -webkit-mask-image: linear-gradient(to bottom,
+      rgba(0,0,0,1) 0px, rgba(0,0,0,0.88) 30px, rgba(0,0,0,0.30) 88px,
+      rgba(0,0,0,0.30) calc(100% - 88px), rgba(0,0,0,0.88) calc(100% - 30px),
+      rgba(0,0,0,1) 100%);
+          mask-image: linear-gradient(to bottom,
+      rgba(0,0,0,1) 0px, rgba(0,0,0,0.88) 30px, rgba(0,0,0,0.30) 88px,
+      rgba(0,0,0,0.30) calc(100% - 88px), rgba(0,0,0,0.88) calc(100% - 30px),
+      rgba(0,0,0,1) 100%);
 }
 
-/* Tape-head banding. Wide and soft rather than tight scanlines: behind
-   body copy the tight line structure fights the text, this doesn't. */
+/* Tape-head banding. Wide and soft rather than tight scanlines: behind body
+   copy the tight line structure fights the text, this doesn't.
+
+   This layer only ever darkens, so unlike the grain it costs no contrast
+   against cream text — it actually adds a little. That is why the banding
+   carries most of the page-wide analog presence and runs unmasked at full
+   strength everywhere, including directly behind copy. */
 .section::after,
 .final::after {
   content: "";
@@ -404,16 +429,16 @@ main,
   z-index: 1;
   pointer-events: none;
   background: var(--scan-soft);
-  opacity: 0.6;
+  opacity: 0.95;
 }
 
 /* Section seams. The join between two sections reads as a tape splice —
-   a hard bright line with chroma pulling apart either side of it. Sits in
-   the gap between sections, nowhere near text. */
+   chroma pulling apart either side of the join. Sits in the gap between
+   sections, nowhere near text. */
 .section + .section::before,
 .section--alt::before {
   box-shadow:
-    inset 0  1px 0 rgba(248, 244, 235, 0.10),
+    inset 0  1px 0 rgba(248, 244, 235, 0.08),
     inset 0  2px 0 var(--chroma-cool),
     inset 0 -1px 0 rgba(0, 0, 0, 0.5);
 }
@@ -493,7 +518,17 @@ main,
    SECTIONS
    ========================================================================= */
 .section { padding: clamp(2.8rem, 7vw, 5rem) 0; }
-.section--alt { background: var(--bg-alt); position: relative; }
+/* The lifted panel colour is eased into the base navy at the top and bottom
+   edges rather than butting against it. A hard seam between two colours
+   this close together reads as a rendering fault mid-scroll; a ~110px ramp
+   reads as the picture drifting, which is the effect we want anyway. */
+.section--alt {
+  position: relative;
+  background:
+    linear-gradient(to bottom, var(--bg) 0, rgba(32, 29, 66, 0) 110px),
+    linear-gradient(to top,    var(--bg) 0, rgba(32, 29, 66, 0) 110px),
+    var(--bg-alt);
+}
 .section h2 {
   font-size: clamp(1.9rem, 4.6vw, 2.9rem);
   text-wrap: balance;
@@ -554,10 +589,13 @@ main,
   filter: saturate(1.16) contrast(1.05) brightness(0.97);
 }
 /* Scanlines and grain over the picture.
-   Overlay rather than normal blending: cream grain composited normally
-   hazes the blacks toward grey, which both muddies the picture and pushes
-   a near-white wash into a palette that has no white in it. Overlay keeps
-   the blacks black and lets the texture ride the midtones. */
+
+   soft-light, not overlay. Overlay's response depends on the luminance of
+   what is underneath it: on the near-black banner photographs it behaved,
+   but over bright artwork it drove everything to the top of the curve and
+   flattened whole images into grey plates. soft-light is the gentler
+   curve — it holds both ends, so dark banners keep their blacks and light
+   artwork keeps its colour, and the texture reads either way. */
 .split__media::before {
   content: "";
   position: absolute;
@@ -566,8 +604,8 @@ main,
   pointer-events: none;
   background-image: var(--scan), var(--grain-coarse);
   background-size: auto, 220px 220px;
-  mix-blend-mode: overlay;
-  opacity: 0.8;
+  mix-blend-mode: soft-light;
+  opacity: 0.92;
 }
 /* Tube curvature, edge chroma bleed and the glass vignette. */
 .split__media::after {
@@ -617,8 +655,9 @@ main,
   pointer-events: none;
   background-image: var(--scan), var(--grain-coarse);
   background-size: auto, 230px 230px;
-  mix-blend-mode: overlay;
-  opacity: 0.85;
+  /* Same curve as the artwork frames — see .split__media::before. */
+  mix-blend-mode: soft-light;
+  opacity: 1;
 }
 /* The tear itself: a bright mistracked slice crawling down the band. */
 .banner-band::after {
@@ -770,6 +809,14 @@ main,
 }
 .final h2 { font-size: clamp(2rem, 5.2vw, 3.2rem); text-wrap: balance; }
 .final p { color: var(--muted); margin: 1.1rem 0 2rem; }
+/* The last line on the page, sitting below the button. Cream rather than
+   muted — it is the closing statement, not supporting copy. */
+.final__closing {
+  margin: 2.4rem auto 0;
+  max-width: 34rem;
+  color: var(--cream);
+  text-wrap: balance;
+}
 
 /* =========================================================================
    FOOTER
