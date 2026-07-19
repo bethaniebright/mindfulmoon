@@ -71,9 +71,23 @@
      tile survive, which is the intent. */
   --noise-lime: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='d'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.863 0 0 0 0 0.988 0 0 0 0 0.455 0.55 0.55 0.18 0 -0.72'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23d)'/%3E%3C/svg%3E");
 
+  /* Black — the field that makes the grain actually read.
+
+     Every other field here is lighter than the background, so on the near
+     black footer the noise pops and on the navy sections it barely
+     registers: all the flecks were pushing the same direction, and against
+     a mid tone there is very little room to push. Real analog noise varies
+     both ways. This field adds the dark half, so grain now reads as grain
+     on any background tone rather than only on the dark ones.
+
+     It also costs nothing in legibility — it only ever darkens, which is
+     the direction that helps light text. */
+  --noise-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.80' numOctaves='3' seed='31' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.48 0.48 0.16 0 -0.26'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+
   /* The full stack, rarest colour on top. */
-  --noise: var(--noise-lime), var(--noise-violet), var(--noise-lav), var(--noise-cream);
-  --noise-size: 150px 150px, 190px 190px, 210px 210px, 170px 170px;
+  --noise: var(--noise-lime), var(--noise-violet), var(--noise-lav),
+           var(--noise-cream), var(--noise-dark);
+  --noise-size: 150px 150px, 190px 190px, 210px 210px, 170px 170px, 160px 160px;
 
   /* Coarse version for image surfaces, where texture can be much heavier. */
   --grain-coarse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='e'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' seed='23' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.973 0 0 0 0 0.957 0 0 0 0 0.922 0.5 0.4 0.1 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23e)'/%3E%3C/svg%3E");
@@ -82,14 +96,19 @@
   --scan: repeating-linear-gradient(to bottom,
             rgba(0,0,0,0.40) 0px, rgba(0,0,0,0.40) 1px,
             transparent 1px, transparent 3px);
-  /* Wider, softer tape-head banding — used behind body copy. Darkening
-     only, so it costs no legibility. Deliberately held well down: this is
-     one layer of the effect, not the effect. When the banding is the
-     loudest thing on the page the result reads as a printed line screen
-     rather than as analog noise. */
+  /* Tape-head banding behind body copy.
+
+     Held very far down. A perfectly regular line screen is the one thing
+     on this page the eye locks onto immediately, and at any strength where
+     it is clearly visible it stops reading as analog noise and starts
+     reading as corduroy. It is a supporting layer only — the grain is what
+     should be legible as texture, and the banding just keeps the surface
+     from feeling flat. On a flat background the noise carries the effect;
+     the tight scanline structure lives on the image surfaces, where a CRT
+     line screen actually belongs. */
   --scan-soft: repeating-linear-gradient(to bottom,
-            rgba(0,0,0,0.14) 0px, rgba(0,0,0,0.14) 2px,
-            transparent 2px, transparent 7px);
+            rgba(0,0,0,0.07) 0px, rgba(0,0,0,0.07) 2px,
+            transparent 2px, transparent 9px);
 
   /* Chroma misregistration. Analog colour-under bleed is red/cyan by
      nature, so these two sit outside the palette on purpose. They appear
@@ -466,14 +485,22 @@ main,
      muted body colour. Behind copy this is about 45% more noise than the
      previous build carried, while the banding that used to dominate has
      been cut by more than half. */
-  opacity: 0.46;
+  /* The layer runs strong — 0.72 — and the mask does the protecting rather
+     than the opacity. In the open bands at the top and bottom of every
+     section the grain is at nearly full strength, which is the density the
+     footer was already getting and the rest of the page was not. Over the
+     reading area it drops to 0.28 of that.
+
+     The ramp reaches its low value by 70px, inside the section padding, so
+     the copy below it never sits on the strong part of the curve. */
+  opacity: 0.72;
   -webkit-mask-image: linear-gradient(to bottom,
-      rgba(0,0,0,1) 0px, rgba(0,0,0,0.90) 30px, rgba(0,0,0,0.28) 88px,
-      rgba(0,0,0,0.28) calc(100% - 88px), rgba(0,0,0,0.90) calc(100% - 30px),
+      rgba(0,0,0,1) 0px, rgba(0,0,0,0.82) 24px, rgba(0,0,0,0.28) 70px,
+      rgba(0,0,0,0.28) calc(100% - 70px), rgba(0,0,0,0.82) calc(100% - 24px),
       rgba(0,0,0,1) 100%);
           mask-image: linear-gradient(to bottom,
-      rgba(0,0,0,1) 0px, rgba(0,0,0,0.90) 30px, rgba(0,0,0,0.28) 88px,
-      rgba(0,0,0,0.28) calc(100% - 88px), rgba(0,0,0,0.90) calc(100% - 30px),
+      rgba(0,0,0,1) 0px, rgba(0,0,0,0.82) 24px, rgba(0,0,0,0.28) 70px,
+      rgba(0,0,0,0.28) calc(100% - 70px), rgba(0,0,0,0.82) calc(100% - 24px),
       rgba(0,0,0,1) 100%);
 }
 
@@ -492,7 +519,7 @@ main,
   z-index: 1;
   pointer-events: none;
   background: var(--scan-soft);
-  opacity: 0.7;
+  opacity: 0.5;
 }
 
 /* Section seams. The join between two sections reads as a tape splice —
@@ -907,6 +934,22 @@ main,
   font-size: 0.88rem;
   line-height: 1.7;
 }
+/* The footer needs its own mask. The shared one ramps down over 70px at each
+   end, which assumes a section tall enough to have a middle; the footer is
+   short enough that its copy sits inside the ramp and ends up on the strong
+   part of the curve. It also has the most to lose — noise reads hardest
+   against near black, so the same density costs more contrast here than
+   anywhere else on the page. Short band at the seam, then flat and low
+   across the text. */
+.site-footer::before {
+  -webkit-mask-image: linear-gradient(to bottom,
+      rgba(0,0,0,1) 0px, rgba(0,0,0,0.70) 20px, rgba(0,0,0,0.20) 52px,
+      rgba(0,0,0,0.20) 100%);
+          mask-image: linear-gradient(to bottom,
+      rgba(0,0,0,1) 0px, rgba(0,0,0,0.70) 20px, rgba(0,0,0,0.20) 52px,
+      rgba(0,0,0,0.20) 100%);
+}
+
 .site-footer .disclaimer { max-width: 70ch; color: var(--muted); }
 .site-footer .copyright { margin-top: 1.3rem; color: var(--cream); }
 
