@@ -21,10 +21,12 @@
 
 :root {
   --bg:        #201d42;
-  /* The lifted panel tone. Mixed 35% from #201d42 toward the palette violet
-     #51507b, so the "other" background on the page is a branded violet
-     rather than a neutral grey. */
-  --bg-alt:    #312f56;
+  /* The alternating panel tone. It used to sit *lighter* than the base navy,
+     which is what made those sections feel washed out. It now sits darker,
+     so the alternating sections read as a recess rather than a lift. Still
+     violet-leaning rather than a neutral grey, and text contrast goes up
+     rather than down. */
+  --bg-alt:    #1b1938;
   --accent:    #51507b;
   --lime:      #DCFC74;
   --lime-deep: #c5e650;   /* hover — darker lime, not a different colour */
@@ -435,22 +437,32 @@ main,
      muted body colour. Behind copy this is about 45% more noise than the
      previous build carried, while the banding that used to dominate has
      been cut by more than half. */
-  /* The layer runs strong — 0.72 — and the mask does the protecting rather
-     than the opacity. In the open bands at the top and bottom of every
-     section the grain is at nearly full strength, which is the density the
-     footer was already getting and the rest of the page was not. Over the
-     reading area it drops to 0.28 of that.
+  /* Two things were making the short sections at the foot of the page read
+     as a pale haze rather than as grain.
 
-     The ramp reaches its low value by 70px, inside the section padding, so
-     the copy below it never sits on the strong part of the curve. */
-  opacity: 0.72;
+     The layer was simply too strong at 0.72 — at that density the fields
+     stop resolving as separate flecks and read as fog.
+
+     And the seam ramps were a fixed 70px at each end, which is fine in a
+     700px section and completely wrong in a 230px one: 140px of ramp left
+     almost nothing at the low value, so a short section ran at near full
+     strength end to end. The ramps are now capped with min() at a fraction
+     of the section height, so every section keeps a calm middle no matter
+     how short it is. */
+  opacity: 0.45;
   -webkit-mask-image: linear-gradient(to bottom,
-      rgba(0,0,0,1) 0px, rgba(0,0,0,0.82) 24px, rgba(0,0,0,0.28) 70px,
-      rgba(0,0,0,0.28) calc(100% - 70px), rgba(0,0,0,0.82) calc(100% - 24px),
+      rgba(0,0,0,1) 0px,
+      rgba(0,0,0,0.78) min(24px, 8%),
+      rgba(0,0,0,0.28) min(70px, 22%),
+      rgba(0,0,0,0.28) calc(100% - min(70px, 22%)),
+      rgba(0,0,0,0.78) calc(100% - min(24px, 8%)),
       rgba(0,0,0,1) 100%);
           mask-image: linear-gradient(to bottom,
-      rgba(0,0,0,1) 0px, rgba(0,0,0,0.82) 24px, rgba(0,0,0,0.28) 70px,
-      rgba(0,0,0,0.28) calc(100% - 70px), rgba(0,0,0,0.82) calc(100% - 24px),
+      rgba(0,0,0,1) 0px,
+      rgba(0,0,0,0.78) min(24px, 8%),
+      rgba(0,0,0,0.28) min(70px, 22%),
+      rgba(0,0,0,0.28) calc(100% - min(70px, 22%)),
+      rgba(0,0,0,0.78) calc(100% - min(24px, 8%)),
       rgba(0,0,0,1) 100%);
 }
 
@@ -554,12 +566,12 @@ main,
 .section--alt {
   position: relative;
   background-image: linear-gradient(to bottom,
-      rgba(49, 47, 86, 0)    0%,
-      rgba(49, 47, 86, 0.55) 12%,
-      rgba(49, 47, 86, 1)    26%,
-      rgba(49, 47, 86, 1)    74%,
-      rgba(49, 47, 86, 0.55) 88%,
-      rgba(49, 47, 86, 0)    100%);
+      rgba(27, 25, 56, 0)    0%,
+      rgba(27, 25, 56, 0.55) 12%,
+      rgba(27, 25, 56, 1)    26%,
+      rgba(27, 25, 56, 1)    74%,
+      rgba(27, 25, 56, 0.55) 88%,
+      rgba(27, 25, 56, 0)    100%);
 }
 .section h2 {
   font-size: clamp(1.9rem, 4.6vw, 2.9rem);
