@@ -34,6 +34,39 @@
   --radius: 14px;
   --shadow: 0 18px 44px rgba(0, 0, 0, 0.4);
 
+  /* =======================================================================
+     VHS TEXTURE TOKENS
+
+     Grain is tinted to the off-white #f8f4eb inside the SVG filter rather
+     than left as raw greyscale turbulence, which would have rendered as
+     white. The feColorMatrix pins RGB to the cream and drives alpha from
+     the noise luminance, so the grain is cream-on-transparent.
+
+     Scanlines are always black at partial alpha — they only ever darken.
+     A lightening scanline would wash the navy toward grey and cost
+     contrast against the cream text.
+     ======================================================================= */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.973 0 0 0 0 0.957 0 0 0 0 0.922 0.42 0.42 0.16 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+
+  /* Coarse grain for image surfaces, where texture can be much heavier. */
+  --grain-coarse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.973 0 0 0 0 0.957 0 0 0 0 0.922 0.5 0.4 0.1 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+
+  /* Tight scanlines — CRT line structure, used on image surfaces. */
+  --scan: repeating-linear-gradient(to bottom,
+            rgba(0,0,0,0.40) 0px, rgba(0,0,0,0.40) 1px,
+            transparent 1px, transparent 3px);
+  /* Wider, softer tape-head banding — used behind body copy, where it has
+     to stay well under the text contrast. */
+  --scan-soft: repeating-linear-gradient(to bottom,
+            rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 2px,
+            transparent 2px, transparent 6px);
+
+  /* Chroma misregistration. Analog colour-under bleed is red/cyan by
+     nature, so these two sit outside the palette on purpose. They appear
+     only as sub-pixel fringing at low alpha, never as fills. */
+  --chroma-warm: rgba(255, 58, 58, 0.30);
+  --chroma-cool: rgba(58, 224, 255, 0.26);
+
   /* Condensed grotesques as fallbacks so the poster proportions survive
      if Anton hasn't loaded yet. */
   --display: "Anton", "Haettenschweiler", "Arial Narrow Bold",
@@ -75,6 +108,14 @@ h1, h2, h3 {
   font-weight: 400;
   line-height: 1.04;
   letter-spacing: 0.005em;
+  /* Chroma misregistration plus tube bloom. This is a colour effect on the
+     glyphs themselves, not a texture laid over them — the letterforms stay
+     solid cream, so contrast is untouched. Offsets are sub-pixel at these
+     display sizes; anything larger starts to smear. */
+  text-shadow:
+    -0.018em 0 0 var(--chroma-warm),
+     0.018em 0 0 var(--chroma-cool),
+     0 0 0.42em rgba(248, 244, 235, 0.20);
 }
 
 .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 1.4rem; }
@@ -114,12 +155,25 @@ h1, h2, h3 {
   transition: transform 0.15s ease, background 0.2s ease,
               border-color 0.2s ease, box-shadow 0.2s ease;
 }
+/* Tube bloom: a bright element on a CRT halates into the surrounding
+   phosphor. The button text stays flat navy on flat lime — the glow is
+   thrown outward, never across the label. */
+.btn {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 0 18px rgba(220, 252, 116, 0.30),
+    0 0 44px rgba(220, 252, 116, 0.14);
+}
 /* Hover darkens the lime rather than changing colour. Text stays navy. */
 .btn:hover {
   background: var(--lime-deep);
   border-color: var(--lime-deep);
   transform: translateY(-2px);
-  box-shadow: 0 10px 26px rgba(197, 230, 80, 0.28);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 10px 26px rgba(197, 230, 80, 0.30),
+    0 0 26px rgba(197, 230, 80, 0.34),
+    0 0 56px rgba(197, 230, 80, 0.16);
 }
 .btn:active { transform: translateY(0); }
 
@@ -169,7 +223,7 @@ summary:focus-visible {
   background-size: 100% 620px;
   background-repeat: no-repeat;
   background-position: center top;
-  opacity: 0.5;
+  opacity: 0.58;
   /* Dense at the very top, effectively gone by the time the body copy
      starts (~390px in), fully clear well before the first section. */
   -webkit-mask-image: linear-gradient(to bottom,
@@ -178,33 +232,74 @@ summary:focus-visible {
           mask-image: linear-gradient(to bottom,
               rgba(0,0,0,1) 0%, rgba(0,0,0,0.70) 13%, rgba(0,0,0,0.26) 33%,
               rgba(0,0,0,0.11) 47%, rgba(0,0,0,0.04) 71%, transparent 100%);
+  /* The head drifting off the tape track — the whole field shears sideways
+     every few seconds, then re-locks. */
+  animation: vhs-tracking 9s steps(1, end) infinite;
 }
-/* Fine animated grain layered over the colour static for a subtle CRT
-   shimmer. Held completely still under prefers-reduced-motion. */
+/* Dense grain, flickering. Sits above the colour static but still behind
+   all copy, and the mask keeps it off the reading area entirely. */
 .static-field::after {
   content: "";
   position: absolute;
   inset: -40%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 150px 150px;
-  opacity: 0.3;
-  mix-blend-mode: screen;
-  animation: static-shimmer 0.6s steps(5) infinite;
+  background-image: var(--grain-coarse), var(--grain);
+  background-size: 260px 260px, 170px 170px;
+  opacity: 0.5;
+  animation: static-shimmer 0.55s steps(5) infinite,
+             vhs-flicker 3.4s steps(1, end) infinite;
 }
-/* Scanlines. These clear first — by the time you're a screen down, the
-   picture has stopped being a broken signal. */
+/* Scanlines plus the tape-head band. These clear first — by the time you
+   are a screen down, the picture has stopped being a broken signal. */
 .static-field::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-      to bottom,
-      rgba(0,0,0,0.10) 0px,
-      rgba(0,0,0,0.10) 1px,
-      transparent 1px,
-      transparent 3px);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 45%);
-          mask-image: linear-gradient(to bottom, #000 0%, transparent 45%);
+  z-index: 1;
+  background: var(--scan);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.5) 28%, transparent 52%);
+          mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.5) 28%, transparent 52%);
+}
+
+/* -------------------------------------------------------------------------
+   The tape-head band: a bright, torn strip of mistracked signal that crawls
+   down through the hero. This is the single most VHS thing on the page, and
+   it lives entirely above the copy, in the empty upper band.
+   ------------------------------------------------------------------------- */
+.static-field__band {
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  height: 46px;
+  top: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom,
+      transparent 0%,
+      rgba(248,244,235,0.05) 18%,
+      rgba(248,244,235,0.13) 42%,
+      rgba(248,244,235,0.05) 70%,
+      transparent 100%),
+    var(--grain-coarse);
+  background-size: auto, 200px 200px;
+  mix-blend-mode: screen;
+  opacity: 0.85;
+  animation: vhs-band 7.5s linear infinite;
+}
+
+/* Tube curvature: the glass edge of the picture tube, on the hero backdrop
+   only. It darkens the extreme corners of the *background*, well outside
+   the text column, and never crosses the reading area. */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 100% at 50% 46%,
+      transparent 58%, rgba(0,0,0,0.30) 88%, rgba(0,0,0,0.55) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 92%);
+          mask-image: linear-gradient(to bottom, #000 0%, #000 55%, transparent 92%);
 }
 
 /* The hero runs taller on wide screens, so the signal takes longer to clear. */
@@ -213,6 +308,7 @@ summary:focus-visible {
     height: 1150px;
     background-size: 100% 820px;
   }
+  .static-field__band { height: 64px; }
 }
 
 @keyframes static-shimmer {
@@ -220,9 +316,107 @@ summary:focus-visible {
   100% { transform: translate(-9px, 7px); }
 }
 
+/* Tracking loss. Holds locked most of the cycle, then shears and re-locks —
+   irregular on purpose, since a tape that glitched on a metronome would
+   read as digital rather than analog. */
+@keyframes vhs-tracking {
+  0%, 74%   { transform: translate3d(0, 0, 0) skewX(0deg); }
+  75%       { transform: translate3d(-1.1%, 0, 0) skewX(0.5deg); }
+  76%       { transform: translate3d(0.8%, 0, 0) skewX(-0.35deg); }
+  77%       { transform: translate3d(-0.35%, 0, 0) skewX(0.15deg); }
+  78%, 95%  { transform: translate3d(0, 0, 0) skewX(0deg); }
+  96%       { transform: translate3d(0.55%, 0, 0) skewX(-0.2deg); }
+  97%, 100% { transform: translate3d(0, 0, 0) skewX(0deg); }
+}
+
+/* Luminance instability — the picture breathing as the AGC hunts. */
+@keyframes vhs-flicker {
+  0%, 100% { opacity: 0.50; }
+  22%      { opacity: 0.41; }
+  46%      { opacity: 0.55; }
+  61%      { opacity: 0.44; }
+  79%      { opacity: 0.52; }
+}
+
+/* The mistracked band crawling down the picture. */
+@keyframes vhs-band {
+  0%   { top: -8%;  opacity: 0; }
+  6%   { opacity: 0.85; }
+  84%  { opacity: 0.7; }
+  92%  { opacity: 0; }
+  100% { top: 78%;  opacity: 0; }
+}
+
 /* Everything real sits above the field. */
 main,
 .site-footer { position: relative; z-index: 1; }
+
+/* =========================================================================
+   SECTION TEXTURE
+
+   Every section carries grain and tape banding, so the analog surface runs
+   the whole length of the page rather than being a hero-only trick.
+
+   The ordering rule that makes this safe: texture is painted by the
+   section's own pseudo-elements at z-index 0 and 1, and the content
+   wrapper is lifted to z-index 2. Texture is therefore always *behind*
+   the copy and never laid over a glyph. Nothing textural is ever stacked
+   above the reading layer anywhere on this page.
+   ========================================================================= */
+.hero,
+.section,
+.final,
+.site-footer {
+  position: relative;
+  isolation: isolate;
+}
+
+/* The reading layer. */
+.hero > .wrap,
+.section > .wrap,
+.final > .wrap,
+.site-footer > .wrap {
+  position: relative;
+  z-index: 2;
+}
+
+/* Grain across the whole section. */
+.section::before,
+.final::before,
+.site-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--grain);
+  background-size: 170px 170px;
+  opacity: 0.14;
+}
+
+/* Tape-head banding. Wide and soft rather than tight scanlines: behind
+   body copy the tight line structure fights the text, this doesn't. */
+.section::after,
+.final::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: var(--scan-soft);
+  opacity: 0.6;
+}
+
+/* Section seams. The join between two sections reads as a tape splice —
+   a hard bright line with chroma pulling apart either side of it. Sits in
+   the gap between sections, nowhere near text. */
+.section + .section::before,
+.section--alt::before {
+  box-shadow:
+    inset 0  1px 0 rgba(248, 244, 235, 0.10),
+    inset 0  2px 0 var(--chroma-cool),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+}
 
 /* =========================================================================
    HERO
@@ -336,21 +530,130 @@ main,
   gap: clamp(1.6rem, 5vw, 3rem);
   align-items: center;
 }
-.split__media img {
-  width: 100%;
+/* -------------------------------------------------------------------------
+   Artwork as a CRT screen.
+
+   Images carry no text, so this is where the aesthetic is pushed hardest:
+   tight scanlines, coarse grain, chroma misregistration on the left and
+   right edges, tube curvature and an edge vignette. The vignette is scoped
+   to the image surface only — it never runs across the page.
+   ------------------------------------------------------------------------- */
+.split__media {
+  position: relative;
+  isolation: isolate;
   border-radius: var(--radius);
+  overflow: hidden;
   box-shadow: var(--shadow);
 }
+.split__media img {
+  width: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  /* Analog colour-under: chroma resolution far below luma, so the picture
+     is slightly soft and oversaturated compared to the source. */
+  filter: saturate(1.16) contrast(1.05) brightness(0.97);
+}
+/* Scanlines and grain over the picture.
+   Overlay rather than normal blending: cream grain composited normally
+   hazes the blacks toward grey, which both muddies the picture and pushes
+   a near-white wash into a palette that has no white in it. Overlay keeps
+   the blacks black and lets the texture ride the midtones. */
+.split__media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: var(--scan), var(--grain-coarse);
+  background-size: auto, 220px 220px;
+  mix-blend-mode: overlay;
+  opacity: 0.8;
+}
+/* Tube curvature, edge chroma bleed and the glass vignette. */
+.split__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: var(--radius);
+  background:
+    radial-gradient(120% 130% at 50% 44%,
+      transparent 54%, rgba(0,0,0,0.34) 86%, rgba(0,0,0,0.62) 100%);
+  box-shadow:
+    inset  2px 0 0 var(--chroma-warm),
+    inset -2px 0 0 var(--chroma-cool),
+    inset  0 0 26px rgba(0, 0, 0, 0.45);
+}
+
 .split__body h2 { margin-bottom: 1.2rem; }
 
 /* =========================================================================
    BANNER BANDS (the wide "cosmic circle" graphics)
    ========================================================================= */
-.banner-band { padding: 0; background: var(--black); }
+/* Full-bleed, text-free, and therefore the heaviest surfaces on the page:
+   dense scanlines, coarse grain, chroma split at both edges and a tear
+   that rips across the picture on a long cycle. */
+.banner-band {
+  padding: 0;
+  background: var(--black);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
 .banner-band img {
   width: 100%;
   max-height: 340px;
   object-fit: cover;
+  filter: saturate(1.2) contrast(1.08) brightness(0.95);
+}
+/* Scanlines + grain + the horizontal tear. The tear is a displaced slice
+   of the picture edge, sweeping down and re-locking. */
+.banner-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: var(--scan), var(--grain-coarse);
+  background-size: auto, 230px 230px;
+  mix-blend-mode: overlay;
+  opacity: 0.85;
+}
+/* The tear itself: a bright mistracked slice crawling down the band. */
+.banner-band::after {
+  content: "";
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  height: 28px;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom,
+      transparent 0%,
+      rgba(248,244,235,0.10) 30%,
+      rgba(248,244,235,0.22) 55%,
+      transparent 100%),
+    var(--grain-coarse);
+  background-size: auto, 180px 180px;
+  mix-blend-mode: screen;
+  box-shadow:
+    inset  3px 0 0 var(--chroma-warm),
+    inset -3px 0 0 var(--chroma-cool);
+  animation: vhs-tear 11s linear infinite;
+}
+
+/* A tear sweeping down and off the bottom of the picture. */
+@keyframes vhs-tear {
+  0%   { top: -12%; transform: translate3d(0,0,0);      opacity: 0; }
+  4%   {            transform: translate3d(-2.5%,0,0);  opacity: 0.9; }
+  9%   {            transform: translate3d(2%,0,0); }
+  14%  {            transform: translate3d(-1%,0,0); }
+  20%  {            transform: translate3d(0,0,0); }
+  70%  { opacity: 0.75; }
+  80%  { opacity: 0; }
+  100% { top: 105%; transform: translate3d(0,0,0);      opacity: 0; }
 }
 
 /* =========================================================================
@@ -508,7 +811,17 @@ main,
    ========================================================================= */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  * { transition: none !important; animation: none !important; }
-  .static-field::after { animation: none !important; }
+  /* Every VHS animation stops dead: the tracking shear, the grain shimmer,
+     the flicker, the crawling tape band and the tear. The texture itself
+     stays — it is the design, and it is all static. Only the motion goes. */
+  *,
+  *::before,
+  *::after { transition: none !important; animation: none !important; }
+
+  /* The two crawling artifacts are mid-sweep when frozen, which would park
+     a bright band across the picture. Park them off-screen instead. */
+  .static-field__band,
+  .banner-band::after { opacity: 0 !important; }
+
   .split__media--sticky { position: static; }
 }
