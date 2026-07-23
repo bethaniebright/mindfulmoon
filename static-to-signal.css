@@ -95,10 +95,10 @@ a { color: var(--lime); }
 }
 
 /* Grain sits behind the copy at a flat opacity — no gradients, nothing for
-   a mobile browser to band. Lighter behind paragraphs, heavier on the
-   black break blocks where there is less text to protect. */
-.hero::before,
-.section::before,
+   a mobile browser to band. The footer keeps the baked grain tile. Content
+   sections that carry a photographic static background use the .bg-* classes
+   below instead; the testimonial breaks and the plain-black sections carry
+   no texture at all. */
 .site-footer::before {
   content: "";
   position: absolute;
@@ -109,6 +109,56 @@ a { color: var(--lime); }
   background-size: 256px 256px;
   opacity: 0.5;
 }
+
+/* =========================================================================
+   SECTION BACKGROUNDS
+
+   Five grainy static photographs, one per named section. Each sits on the
+   ::before layer behind the copy, under a flat black scrim so the lime and
+   cream text keeps its contrast over the lighter frames. The scrim is baked
+   into the same declaration as a solid-colour gradient, so there is still
+   nothing for a mobile browser to band. Image 1 is near-black already and
+   takes a lighter scrim so its static reads; 2–5 are mid-grey and take a
+   heavier one.
+   ========================================================================= */
+.bg-1::before,
+.bg-2::before,
+.bg-3::before,
+.bg-4::before,
+.bg-5::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+.bg-1::before {
+  background-image: linear-gradient(rgba(0,0,0,0.62), rgba(0,0,0,0.62)),
+    url("images/static-to-signal/bg-static-1.jpg");
+}
+.bg-2::before {
+  background-image: linear-gradient(rgba(0,0,0,0.78), rgba(0,0,0,0.78)),
+    url("images/static-to-signal/bg-static-2.jpg");
+}
+.bg-3::before {
+  background-image: linear-gradient(rgba(0,0,0,0.78), rgba(0,0,0,0.78)),
+    url("images/static-to-signal/bg-static-3.jpg");
+}
+.bg-4::before {
+  background-image: linear-gradient(rgba(0,0,0,0.78), rgba(0,0,0,0.78)),
+    url("images/static-to-signal/bg-static-4.jpg");
+}
+.bg-5::before {
+  background-image: linear-gradient(rgba(0,0,0,0.76), rgba(0,0,0,0.76)),
+    url("images/static-to-signal/bg-static-5.jpg");
+}
+
+/* Plain, textureless black — the testimonial breaks and the price/FAQ
+   blocks. */
+.section--black { background: var(--black); }
 
 /* =========================================================================
    TYPE
@@ -201,24 +251,14 @@ h2 { font-size: clamp(2rem, 8vw, 2.9rem); }
 /* =========================================================================
    PULL-QUOTE BREAKS
 
-   Full-bleed, pure black, and the only place the grain is allowed to be
-   loud. These carry the section rhythm in place of decorative banners.
+   Full-bleed and pure black — no texture. These carry the section rhythm in
+   place of decorative banners, and the testimonials read cleanest on flat
+   black.
    ========================================================================= */
 .break {
   background: var(--black);
   border-top: 1px solid rgba(220, 252, 116, 0.55);
   padding: clamp(3.5rem, 13vw, 6rem) 0;
-}
-.break::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image: var(--grain);
-  background-size: 256px 256px;
-  opacity: 0.85;
-  animation: grain-drift 8s steps(6, end) infinite;
 }
 .break blockquote p {
   font-family: var(--display);
@@ -236,13 +276,6 @@ h2 { font-size: clamp(2rem, 8vw, 2.9rem); }
   font-style: normal;
   font-size: clamp(1.05rem, 4vw, 1.25rem);
   color: var(--cream);
-}
-
-/* A slow crawl across the grain tile. Texture only — it never touches the
-   copy, which sits ten layers above it. */
-@keyframes grain-drift {
-  0%   { background-position: 0 0; }
-  100% { background-position: 256px 128px; }
 }
 
 /* =========================================================================
@@ -341,19 +374,111 @@ a:focus-visible {
 }
 
 /* =========================================================================
-   PRICE
+   PRICE CARD
+
+   A bordered lime box on flat black — no heading. The amount, the promise,
+   the fine print, and the button, boxed together.
    ========================================================================= */
-.price {
+.pricecard {
+  max-width: 30rem;
+  margin-inline: auto;
+  border: 1px solid var(--lime);
+  border-radius: var(--radius);
+  padding: clamp(2rem, 8vw, 2.8rem) clamp(1.5rem, 6vw, 2.5rem)
+           clamp(2.2rem, 8vw, 3rem);
+  text-align: center;
+}
+.pricecard__amount {
   font-family: var(--display);
   font-weight: 600;
-  font-size: clamp(1.7rem, 6.5vw, 2.2rem);
-  line-height: 1.2;
-  color: var(--cream);
+  font-size: clamp(2.4rem, 10vw, 3.2rem);
+  line-height: 1;
+  color: var(--lime);
 }
-.price__note {
+.pricecard__title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.7rem, 6.5vw, 2.3rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--cream);
   margin-top: 0.9rem;
+}
+.pricecard__note {
+  margin: 1.1rem auto 0;
+  max-width: 24rem;
   color: var(--muted);
   font-size: 0.97rem;
+  line-height: 1.6;
+}
+.pricecard .cta { margin-top: clamp(1.6rem, 6vw, 2.2rem); }
+
+/* =========================================================================
+   FAQ
+
+   Native <details> accordion — accessible, keyboard-operable, no JS. A
+   hand-drawn-feeling lime oval frames the heading. Each row is a lime
+   hairline, a serif question, and a chevron that flips open.
+   ========================================================================= */
+.faq__title {
+  text-align: center;
+  margin-bottom: clamp(1.8rem, 7vw, 2.6rem);
+}
+.faq__title span {
+  display: inline-block;
+  padding: 0.35em 1.15em 0.45em;
+  border: 2px solid var(--lime);
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.faq__list { display: block; }
+
+.faq__item {
+  border-top: 1px solid rgba(220, 252, 116, 0.45);
+}
+.faq__item:last-child {
+  border-bottom: 1px solid rgba(220, 252, 116, 0.45);
+}
+
+.faq__item summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1.3rem, 5vw, 1.7rem) 0;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.2rem, 4.6vw, 1.5rem);
+  line-height: 1.25;
+  color: var(--lime);
+}
+.faq__item summary::-webkit-details-marker { display: none; }
+
+/* Chevron drawn as a lime SVG so it matches the type colour exactly, then
+   flipped when the row opens. */
+.faq__item summary::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23DCFC74" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>') center / contain no-repeat;
+  transition: transform 0.25s ease;
+}
+.faq__item[open] summary::after { transform: rotate(180deg); }
+
+.faq__a {
+  padding: 0 0 clamp(1.4rem, 5vw, 1.8rem);
+  color: var(--cream);
+  line-height: 1.7;
+  max-width: 44rem;
+}
+.faq__item summary:focus-visible {
+  outline: 3px solid var(--lime);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 /* =========================================================================
