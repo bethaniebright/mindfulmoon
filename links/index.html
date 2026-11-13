@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#201d42">
+<title>Mindful Moon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Poppins:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --navy: #201d42;
+    --navy-2: #2b2756;
+    --cream: #f8f4eb;
+    --cream-dim: rgba(248, 244, 235, 0.72);
+    --card: #c2bfcb;
+    --lime: #dcfc74;
+    --ink: #201d42;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    min-height: 100vh;
+    background: var(--navy);
+    color: var(--cream);
+    font-family: "Poppins", system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.45;
+    overflow-x: hidden;
+  }
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 34px 32px;
+  }
+
+  /* Header */
+  header { text-align: center; margin-bottom: 28px; }
+  .hero {
+    margin: 0 -34px;
+    aspect-ratio: 4 / 3;
+    max-height: 340px;
+    overflow: hidden;
+  }
+  .hero img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+  }
+  .hero + h1 { margin-top: -40px; position: relative; }
+  h1 {
+    font-family: "Lora", Georgia, serif;
+    font-weight: 700;
+    font-size: clamp(28px, 8.6vw, 36px);
+    white-space: nowrap;
+    line-height: 1.1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .creds {
+    font-size: 19px;
+    color: var(--cream-dim);
+    margin-top: 6px;
+  }
+
+  /* Featured */
+  .featured {
+    display: block;
+    text-decoration: none;
+    background: var(--lime);
+    color: var(--ink);
+    border-radius: 18px;
+    padding: 18px 20px 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 0 1px rgba(220, 252, 116, 0.4), 0 8px 28px rgba(220, 252, 116, 0.18);
+    transition: transform 0.12s ease;
+  }
+  .featured:active { transform: scale(0.98); }
+  .featured .kicker {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .featured .kicker .tag { background: var(--ink); color: var(--lime); }
+  .featured .title { font-size: 25px; }
+  .featured .product { color: rgba(32, 29, 66, 0.7); }
+  .featured .community {
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.3;
+    margin: 4px 0 6px;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+  .featured .go {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 10px 18px;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  /* Sections */
+  section { margin-bottom: 26px; }
+  h2 {
+    font-family: "Poppins", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--lime);
+    margin: 0 4px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(220, 252, 116, 0.3);
+  }
+
+  .card {
+    display: block;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    min-height: 64px;
+    transition: transform 0.12s ease;
+  }
+  .card:active { transform: scale(0.98); }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .title {
+    font-family: "Lora", Georgia, serif;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 1.2;
+  }
+  .product.shop-name { font-size: 16px; font-weight: 600; color: var(--ink); }
+  .desc {
+    font-size: 14px;
+    line-height: 1.45;
+    margin-top: 10px;
+    color: rgba(32, 29, 66, 0.9);
+  }
+  .product {
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(32, 29, 66, 0.78);
+    margin-top: 3px;
+  }
+  .tags { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; }
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--lime);
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+  .price { font-size: 12px; font-weight: 600; color: rgba(32, 29, 66, 0.82); white-space: nowrap; }
+
+  a:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; }
+
+  .newsletter {
+    margin: 6px 0 28px;
+    border: 1px solid var(--lime);
+    border-radius: 22px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .nl-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--card);
+  }
+  .nl-title {
+    font-family: "Lora", Georgia, serif;
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.15;
+    color: var(--lime);
+    margin: 6px 0 0;
+    display: block;
+    letter-spacing: 0.02em;
+  }
+  .nl-title::after { content: none; }
+  .nl-sub {
+    font-size: 15px;
+    color: var(--cream);
+    margin: 6px 0 18px;
+  }
+  .newsletter input {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    margin-bottom: 10px;
+    padding: 0 16px;
+    border: 1.5px solid var(--lime);
+    border-radius: 12px;
+    background: var(--cream);
+    color: var(--ink);
+    font: 500 16px "Poppins", sans-serif;
+  }
+  .newsletter input::placeholder { color: rgba(32, 29, 66, 0.55); }
+  .newsletter input:focus { outline: 3px solid var(--lime); outline-offset: 2px; }
+  .newsletter button {
+    width: 100%;
+    min-height: 50px;
+    margin-top: 4px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--lime);
+    color: var(--ink);
+    font: 600 16px "Poppins", sans-serif;
+    cursor: pointer;
+  }
+  .newsletter button:active { transform: scale(0.98); }
+  .newsletter button:disabled { opacity: 0.6; }
+  .nl-msg { font-size: 14px; margin-top: 12px; min-height: 1em; }
+  .nl-msg:empty { display: none; }
+  .newsletter [hidden] { display: none !important; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  footer { text-align: center; padding-top: 8px; }
+  .ig {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1.5px solid var(--cream-dim);
+    color: var(--cream);
+  }
+  .ig svg { width: 24px; height: 24px; }
+  .disclaimer {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--cream-dim);
+    max-width: 340px;
+    margin: 14px auto 0;
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="hero"><img src="hero.jpg" width="400" height="300" alt="Bethanie making a colorful scribble drawing on a large sheet of paper"></div>
+    <h1>Mindful Moon</h1>
+    <p class="creds">Bethanie Bright, LPCMH, ATR</p>
+  </header>
+
+  <a class="featured" href="https://www.skool.com/portals-8012">
+    <div class="kicker"><span>Start here</span><span class="tag">Free</span></div>
+    <div class="title">Free Weekly Creative Studio</div>
+    <div class="product community">Canvas for Chaos</div>
+    <div class="product">Weekly open studio, monthly creative workshops</div>
+    <span class="go">Join the studio &rarr;</span>
+  </a>
+
+  <section>
+    <h2>Shop</h2>
+    <a class="card" href="https://www.etsy.com/shop/MindfulMoonTherapy">
+      <div class="card-top">
+        <div>
+          <div class="title">Art Prints &amp; Merch</div>
+          <div class="product shop-name">My Etsy Shop</div>
+        </div>
+        <div class="tags"><span class="tag">Shop</span></div>
+      </div>
+    </a>
+  </section>
+
+  <section>
+    <h2>Free</h2>
+    <a class="card" href="https://luma.com/MindfulMoon">
+      <div class="card-top">
+        <div>
+          <div class="title">Monthly Creative Workshops</div>
+          <div class="product">Canvas for Chaos Open House</div>
+        </div>
+        <div class="tags"><span class="tag">Free</span><span class="price">Online</span></div>
+      </div>
+    </a>
+    <a class="card" href="https://www.mindfulmoontherapy.com/ctssignup">
+      <div class="card-top">
+        <div>
+          <div class="title">Creative Journaling to Get Out of Your Head</div>
+          <div class="product">Clearing the Static</div>
+        </div>
+        <div class="tags"><span class="tag">Free</span><span class="price">On demand</span></div>
+      </div>
+    </a>
+  </section>
+
+  <section>
+    <h2>Self-paced</h2>
+    <a class="card" href="https://www.mindfulmoontherapy.com/signal">
+      <div class="card-top">
+        <div>
+          <div class="title">30 Day Intuitive Art Journal Challenge</div>
+          <div class="product">Static to Signal</div>
+        </div>
+        <div class="tags"><span class="tag">Self-paced</span><span class="price">$99</span></div>
+      </div>
+    </a>
+    <a class="card" href="https://www.mindfulmoontherapy.com/vault">
+      <div class="card-top">
+        <div>
+          <div class="title">All My Workshops in One Place</div>
+          <div class="product">The Full Vault</div>
+        </div>
+        <div class="tags"><span class="tag">Self-paced</span><span class="price">$179</span></div>
+      </div>
+    </a>
+  </section>
+
+  <section>
+    <h2>Live</h2>
+    <a class="card" href="https://luma.com/ps26e1do">
+      <div class="card-top">
+        <div>
+          <div class="title">In-Person Workshop, Delaware</div>
+          <div class="product">Wild Stillness &middot; Sat, Dec 19</div>
+        </div>
+        <div class="tags"><span class="tag">In person</span><span class="price">$35</span></div>
+      </div>
+    </a>
+    <a class="card" href="https://www.skool.com/portals-8012">
+      <div class="card-top">
+        <div>
+          <div class="title">Monthly Creative Community</div>
+          <div class="product">Canvas for Chaos</div>
+        </div>
+        <div class="tags"><span class="tag">Live</span><span class="price">$49/mo</span></div>
+      </div>
+      <p class="desc">Quiet your inner critic with other creatives.</p>
+    </a>
+    <a class="card" href="https://www.mindfulmoontherapy.com/signal-live">
+      <div class="card-top">
+        <div>
+          <div class="title">Live Intuitive Art Journal Challenge, Join the Waitlist</div>
+          <div class="product">Static to Signal LIVE</div>
+        </div>
+        <div class="tags"><span class="tag">Waitlist</span></div>
+      </div>
+    </a>
+  </section>
+
+  <form class="newsletter" id="newsletter" action="/api/subscribe" method="post" novalidate>
+    <p class="nl-eyebrow">Art &amp; Alchemy</p>
+    <h2 class="nl-title">Stay connected</h2>
+    <p class="nl-sub">Your source for inspiration, reflection, and self-expression.</p>
+    <label class="sr-only" for="nl-name">First name</label>
+    <input id="nl-name" name="firstName" type="text" placeholder="First name" autocomplete="given-name" maxlength="100">
+    <label class="sr-only" for="nl-email">Email</label>
+    <input id="nl-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" inputmode="email" required>
+    <div class="hp" aria-hidden="true"><label>Website <input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
+    <button type="submit">Count me in</button>
+    <p class="nl-msg" role="status" aria-live="polite"></p>
+  </form>
+
+  <footer>
+    <a class="ig" href="https://www.instagram.com/mindfulmoontherapy" aria-label="Mindful Moon on Instagram">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+    </a>
+    <p class="disclaimer">Everything on this page is creative and educational. None of it is therapy or a stand-in for working with a therapist.</p>
+  </footer>
+</main>
+<script>
+  (function () {
+    var openedAt = Date.now();
+    var form = document.getElementById("newsletter");
+    var msg = form.querySelector(".nl-msg");
+    var btn = form.querySelector("button");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var email = form.email.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        msg.textContent = "Please enter a valid email.";
+        form.email.focus();
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+      fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstName: form.firstName.value, email: email, website: form.website.value, elapsed: Date.now() - openedAt })
+      })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (res) {
+          if (!res.ok) throw new Error(res.d.error);
+          form.querySelectorAll("input, button, label").forEach(function (el) { el.hidden = true; });
+          msg.textContent = "You're on the list. Thank you!";
+        })
+        .catch(function (err) {
+          msg.textContent = err.message || "Something went wrong. Please try again.";
+          btn.disabled = false;
+          btn.textContent = "Count me in";
+        });
+    });
+  })();
+</script>
+</body>
+</html>
